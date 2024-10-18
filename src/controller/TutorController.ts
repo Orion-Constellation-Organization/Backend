@@ -167,4 +167,14 @@ export class TutorController {
       return res.status(500).json({ message: 'Internal Server Error', error });
     }
   }
+
+  async getAll(req: Request, res: Response) {
+    try {
+      const tutor = await MysqlDataSource.getRepository(Tutor).find();
+      return res.status(200).json(tutor);
+    } catch (error) {
+      console.error('Error fetching tutor:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+  }
 }
