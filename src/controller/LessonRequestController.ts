@@ -381,4 +381,15 @@ export class LessonRequestController {
       return res.status(statusCode).json({ message });
     }
   }
+
+  async getFilteredRequests(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const requests = await LessonRequestService.getFilteredRequests(id);
+      return res.status(200).json(requests);
+    } catch (error) {
+      const { statusCode, message } = handleError(error);
+      return res.status(statusCode).json({ message });
+    }
+  }
 }
