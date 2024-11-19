@@ -111,6 +111,11 @@ router.get(
   new LessonRequestController().getById
 );
 
+router.get(
+  '/api/get/lessonrequest/filtered/:id',
+  new LessonRequestController().getFilteredRequests
+);
+
 // Subject route
 router.post(
   '/api/register/subject',
