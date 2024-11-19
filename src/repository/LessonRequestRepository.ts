@@ -1,5 +1,9 @@
+import { EnumStatusName } from '../enum/EnumStatusName';
 import { MysqlDataSource } from '../config/database';
 import { LessonRequest } from '../entity/LessonRequest';
+import { Subject } from '../entity/Subject';
+import { EducationLevel } from '../entity/EducationLevel';
+import { In } from 'typeorm';
 
 export class LessonRequestRepository {
   private static relations = ['subject', 'student', 'tutor'];
@@ -32,6 +36,25 @@ export class LessonRequestRepository {
     return await MysqlDataSource.getRepository(LessonRequest).findOne({
       where: { ClassId: id },
       relations: this.relations
+    });
+  }
+
+  static async getFilteredRequests(
+    tutorSubjects: Subject[],
+    tutorEducationLevels: EducationLevel[]
+  ) {
+    const repository = MysqlDataSource.getRepository(LessonRequest);
+    return await repository.find({
+      where: {
+        subject: In(tutorSubjects.map((subject) => subject.subjectId)),
+        status: EnumStatusName.PENDENTE,
+        student: {
+          educationLevel: In(
+            tutorEducationLevels.map((level) => level.educationId)
+          )
+        }
+      },
+      relations: ['student']
     });
   }
 }
