@@ -93,4 +93,14 @@ export class LessonRequestService {
       throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
     }
   }
+
+  static async getFilteredRequests(tutorId) {
+    const tutor = await TutorService.getTutorById(Number(tutorId));
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(
+      tutor.subjects,
+      tutor.educationLevels
+    );
+
+    return lessonRequests.map(LessonRequestService.formatLessonRequest);
+  }
 }
