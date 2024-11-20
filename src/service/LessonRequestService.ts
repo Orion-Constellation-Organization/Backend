@@ -103,7 +103,9 @@ export class LessonRequestService {
       tutor.subjects,
       tutor.educationLevels
     );
-
+    if (lessonRequests.length === 0) {
+      throw new AppError(EnumErrorMessages.ANY_LESSON_REQUEST_FOUND, 404);
+    }
     return lessonRequests.map(LessonRequestService.formatLessonRequest);
   }
 }
