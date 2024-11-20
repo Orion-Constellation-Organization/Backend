@@ -96,6 +96,9 @@ export class LessonRequestService {
 
   static async getFilteredRequests(tutorId) {
     const tutor = await TutorService.getTutorById(Number(tutorId));
+    if (!tutor.subjects || tutor.subjects.length === 0) {
+      throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
+    }
     const lessonRequests = await LessonRequestRepository.getFilteredRequests(
       tutor.subjects,
       tutor.educationLevels
