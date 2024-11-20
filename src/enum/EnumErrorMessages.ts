@@ -34,7 +34,7 @@ export enum EnumErrorMessages {
   CPF_INVALID = 'CPF inválido.',
   EXPERTISE_LENGTH_EXCEEDED = 'A expertise deve ter no máximo 50 caracteres.',
   PROJECT_REASON_LENGTH_EXCEEDED = 'O motivo do projeto deve ter no máximo 200 caracteres.',
-
+  TUTOR_SUBJECT_NOT_FOUNT = 'O Tutor não possui matérias cadastradas',
   // Student errors
   STUDENT_NOT_FOUND = 'Aluno não encontrado.',
   STUDENT_ID_REQUIRED = 'O Id do aluno é obrigatório.',
