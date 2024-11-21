@@ -113,6 +113,7 @@ router.get(
 
 router.get(
   '/api/get/lessonrequest/filtered/:id',
+  authMiddleware(),
   new LessonRequestController().getFilteredRequests
 );
 
