@@ -382,6 +382,103 @@ export class LessonRequestController {
     }
   }
 
+  /**
+   * @swagger
+   * /api/get/lessonrequest/filtered/{id}:
+   *   get:
+   *     summary: Get filtered lesson requests for a tutor
+   *     tags: [Lesson Request]
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         description: ID of the tutor
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *     responses:
+   *       '200':
+   *         description: Filtered lesson requests retrieved successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 type: object
+   *                 properties:
+   *                   ClassId:
+   *                     type: integer
+   *                     example: 2
+   *                   reason:
+   *                     type: array
+   *                     items:
+   *                       type: string
+   *                       example: "reforço"
+   *                   preferredDates:
+   *                     type: array
+   *                     items:
+   *                       type: string
+   *                       example: "2024-12-21 12:31"
+   *                   status:
+   *                     type: string
+   *                     example: "pendente"
+   *                   additionalInfo:
+   *                     type: string
+   *                     nullable: true
+   *                     example: "Dificuldade em funções"
+   *                   student:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 1
+   *                       username:
+   *                         type: string
+   *                         example: "isaacbpm"
+   *                       fullName:
+   *                         type: string
+   *                         example: "isaac"
+   *                       birthDate:
+   *                         type: string
+   *                         format: date
+   *                         example: "2004-03-26"
+   *                   tutor:
+   *                     type: object
+   *                     nullable: true
+   *                     example: null
+   *       '404':
+   *         description: Tutor not found or no subjects associated with the tutor
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O Tutor não possui matérias cadastradas"
+   *       '401':
+   *         description: Unauthorized, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token inválido."
+   *       '500':
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
   async getFilteredRequests(req: Request, res: Response) {
     try {
       const { id } = req.params;
