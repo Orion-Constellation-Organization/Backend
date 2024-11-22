@@ -94,6 +94,21 @@ export class LessonRequestService {
     }
   }
 
+  static async deleteLessonRequestById(classId: number) {
+    try {
+      const lessonRequest =
+        await LessonRequestRepository.getLessonRequestById(classId);
+
+      if (!lessonRequest) {
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      }
+
+      await LessonRequestRepository.deleteByClassId(classId);
+    } catch (error) {
+      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
+    }
+  }
+
   static async getFilteredRequests(tutorId) {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {

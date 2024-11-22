@@ -39,6 +39,16 @@ export class LessonRequestRepository {
     });
   }
 
+  static async findByClassId(ClassId: number): Promise<LessonRequest[]> {
+    const repository = MysqlDataSource.getRepository(LessonRequest);
+    return await repository.find({ where: { ClassId } });
+  }
+
+  static async deleteByClassId(ClassId: number): Promise<void> {
+    const repository = MysqlDataSource.getRepository(LessonRequest);
+    await repository.delete({ ClassId });
+  }
+
   static async getFilteredRequests(
     tutorSubjects: Subject[],
     tutorEducationLevels: EducationLevel[]

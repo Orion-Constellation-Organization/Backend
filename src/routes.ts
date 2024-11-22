@@ -111,6 +111,11 @@ router.get(
   new LessonRequestController().getById
 );
 
+router.delete(
+  '/api/delete/lessonrequest/:id',
+  new LessonRequestController().DeleteById
+);
+
 router.get(
   '/api/get/lessonrequest/filtered/:id',
   authMiddleware(),

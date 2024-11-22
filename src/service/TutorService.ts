@@ -2,7 +2,7 @@ import { Tutor } from '../entity/Tutor';
 import { TutorRepository } from '../repository/TutorRepository';
 import { UserService } from './UserService';
 import { EnumUserType } from '../enum/EnumUserType';
-import { S3Service } from './S3Service';
+import { FileStorageService } from './FileStorageService';
 import { SubjectRepository } from '../repository/SubjectRepository';
 import { EducationLevelRepository } from '../repository/EducationLevelRepository';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
@@ -79,7 +79,7 @@ export class TutorService extends UserService {
         throw new AppError(EnumErrorMessages.PHOTO_REQUIRED, 400);
       }
 
-      const photoUrl = await S3Service.uploadPhoto(file);
+      const photoUrl = await FileStorageService.uploadPhoto(file);
       tutor.photoUrl = photoUrl;
 
       return await TutorRepository.saveTutor(tutor);
@@ -105,7 +105,7 @@ export class TutorService extends UserService {
 
       const foundSubjects =
         await SubjectRepository.findSubjectByIds(subjectIds);
-      if (foundSubjects.length !== subjectIds.length) {
+      if (!foundSubjects || foundSubjects.length !== subjectIds.length) {
         throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
       }
 
