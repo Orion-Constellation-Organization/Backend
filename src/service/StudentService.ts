@@ -18,6 +18,10 @@ export class StudentService extends UserService {
       birthDate: student.birthDate,
       educationLevel: student.educationLevel,
       lessonRequests: student.lessonRequests
+        ? student.lessonRequests.map((lessonRequest) =>
+            LessonRequestService.formatLessonRequest(lessonRequest)
+          )
+        : []
     };
   }
 
@@ -69,6 +73,7 @@ export class StudentService extends UserService {
       }
       return StudentService.formatStudent(student);
     } catch (error) {
+      console.error('Error fetching student:', error); // Log completo do erro
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);
     }
@@ -87,17 +92,20 @@ export class StudentService extends UserService {
     }
   }
 
-  static async getStudentLessonsByStatus(id, status: EnumStatusName) {
+  static async getStudentLessonsByStatus(id: number, status: EnumStatusName) {
     try {
       const lessonRequests = await StudentRepository.findStudentLessonsByStatus(
         id,
         status
       );
 
-      if (!lessonRequests) {
+      if (!lessonRequests || lessonRequests.length === 0) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
       }
-      return lessonRequests.map(LessonRequestService.formatLessonRequest);
+
+      return lessonRequests.map((lessonRequest) =>
+        LessonRequestService.formatLessonRequest(lessonRequest)
+      );
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);

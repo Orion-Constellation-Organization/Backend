@@ -14,17 +14,26 @@ export class LessonRequestService {
   static formatLessonRequest(lessonRequest: LessonRequest) {
     return {
       ClassId: lessonRequest.ClassId,
-      reason: lessonRequest.reason,
-      preferredDates: lessonRequest.preferredDates,
+      reason: Array.isArray(lessonRequest.reason)
+        ? lessonRequest.reason
+        : [lessonRequest.reason],
+      preferredDates: lessonRequest.preferredDates
+        ? lessonRequest.preferredDates
+        : [],
       status: lessonRequest.status,
       additionalInfo: lessonRequest.additionalInfo,
       subject: lessonRequest.subject,
       student: lessonRequest.student
         ? StudentService.formatStudent(lessonRequest.student)
         : null,
-      tutor: lessonRequest.tutor
-        ? TutorService.formatTutor(lessonRequest.tutor)
-        : null
+      tutors:
+        lessonRequest.lessonRequestTutors &&
+        lessonRequest.lessonRequestTutors.length > 0
+          ? lessonRequest.lessonRequestTutors.map((lessonRequestTutor) => ({
+              tutor: TutorService.formatTutor(lessonRequestTutor.tutor),
+              chosenDates: lessonRequestTutor.chosenDate
+            }))
+          : []
     };
   }
 
@@ -75,13 +84,13 @@ export class LessonRequestService {
 
   static async getLessonRequestById(id: number) {
     try {
-      const lessonRequest = await LessonRequestRepository.getLessonRequestById(
-        Number(id)
-      );
+      const lessonRequest =
+        await LessonRequestRepository.getLessonRequestById(id);
 
       if (!lessonRequest) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
       }
+
       return LessonRequestService.formatLessonRequest(lessonRequest);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -102,6 +111,10 @@ export class LessonRequestService {
 
       if (!lessonRequest) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      }
+
+      if (lessonRequest.status === EnumStatusName.ACEITO) {
+        throw new AppError(EnumErrorMessages.INVALID_PENDENTE_STATUS, 400);
       }
 
       if (

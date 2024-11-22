@@ -2,7 +2,7 @@ import { Entity, Column, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 import { Subject } from './Subject';
 import { EducationLevel } from './EducationLevel';
 import { User } from './User';
-import { LessonRequest } from './LessonRequest';
+import { LessonRequestTutor } from './LessonRequestTutor';
 
 @Entity()
 export class Tutor extends User {
@@ -46,6 +46,9 @@ export class Tutor extends User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   photoUrl: string;
 
-  @OneToMany(() => LessonRequest, (lessonRequest) => lessonRequest.tutor)
-  lessonRequests: LessonRequest[];
+  @OneToMany(
+    () => LessonRequestTutor,
+    (lessonRequestTutor) => lessonRequestTutor.tutor
+  )
+  lessonRequestTutors: LessonRequestTutor[];
 }
