@@ -50,7 +50,7 @@ router.patch(
 );
 
 router.patch(
-  '/api/update/tutor-accept-lesson',
+  '/api/tutor-accept-lesson',
   authMiddleware(),
   new TutorController().acceptLessonRequest
 );
@@ -87,7 +87,7 @@ router.get(
 );
 
 router.get(
-  '/api/get/student-confirmed-lessons/:id',
+  '/api/student-confirmed-lessons/:id',
   authMiddleware(),
   new StudentController().getStudentConfirmedLessons
 );
