@@ -81,7 +81,7 @@ router.get(
 );
 
 router.get(
-  '/api/get/student-accepted-lessons/:id',
+  '/api/student-accepted-lessons/:id',
   authMiddleware(),
   new StudentController().getStudentAcceptedLessons
 );
