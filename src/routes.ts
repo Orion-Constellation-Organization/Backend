@@ -30,14 +30,14 @@ router.post(
 router.get('/api/get/tutor', authMiddleware(), new TutorController().getAll);
 
 router.patch(
-  '/api/update/tutor',
+  '/api/tutor',
   authMiddleware(),
   UpdatePersonalDataValidator,
   new TutorController().updatePersonalData
 );
 
 router.patch(
-  '/api/update/photo',
+  '/api/photo',
   authMiddleware(),
   upload.single('image'),
   UploadPhotoValidator,
@@ -45,14 +45,14 @@ router.patch(
 );
 
 router.get(
-  '/api/get/tutor/:id',
+  '/api/tutor/:id',
   authMiddleware(),
   new TutorController().getById
 );
 
 // Students routes
 router.get(
-  '/api/get/student',
+  '/api/student',
   authMiddleware(),
   new StudentController().getAll
 );
@@ -64,13 +64,13 @@ router.post(
 );
 
 router.get(
-  '/api/get/student/:id',
+  '/api/student/:id',
   authMiddleware(),
   new StudentController().getById
 );
 
 router.get(
-  '/api/get/student-pending/:id',
+  '/api/student-pending/:id',
   authMiddleware(),
   new StudentController().getPendingLessonByStudentId
 );
@@ -83,7 +83,7 @@ router.post(
 );
 
 router.get(
-  '/api/get/educationlevel',
+  '/api/educationlevel',
   authMiddleware(),
   new EducationLevelController().getAll
 );
@@ -100,24 +100,24 @@ router.post(
 );
 
 router.get(
-  '/api/get/lessonrequest',
+  '/api/lessonrequest',
   authMiddleware(),
   new LessonRequestController().getAll
 );
 
 router.get(
-  '/api/get/lessonrequest/:id',
+  '/api/lessonrequest/:id',
   authMiddleware(),
   new LessonRequestController().getById
 );
 
 router.delete(
-  '/api/delete/lessonrequest/:id',
+  '/api/lessonrequest/:id',
   new LessonRequestController().DeleteById
 );
 
 router.get(
-  '/api/get/lessonrequest/filtered/:id',
+  '/api/lessonrequest/filtered/:id',
   authMiddleware(),
   new LessonRequestController().getFilteredRequests
 );
@@ -129,7 +129,7 @@ router.post(
   new SubjectController().create
 );
 router.get(
-  '/api/get/subject',
+  '/api/subject',
   authMiddleware(),
   new SubjectController().getAll
 );
