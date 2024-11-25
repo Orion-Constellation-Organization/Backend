@@ -44,18 +44,10 @@ router.patch(
   new TutorController().updatePhoto
 );
 
-router.get(
-  '/api/tutor/:id',
-  authMiddleware(),
-  new TutorController().getById
-);
+router.get('/api/tutor/:id', authMiddleware(), new TutorController().getById);
 
 // Students routes
-router.get(
-  '/api/student',
-  authMiddleware(),
-  new StudentController().getAll
-);
+router.get('/api/student', authMiddleware(), new StudentController().getAll);
 
 router.post(
   '/api/register/student',
@@ -128,9 +120,5 @@ router.post(
   authMiddleware(),
   new SubjectController().create
 );
-router.get(
-  '/api/subject',
-  authMiddleware(),
-  new SubjectController().getAll
-);
+router.get('/api/subject', authMiddleware(), new SubjectController().getAll);
 export default router;
