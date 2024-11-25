@@ -192,7 +192,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/get/lessonrequest:
+   * /api/lessonrequest:
    *   get:
    *     summary: Retrieve all lesson requests
    *     tags: [Lesson Request]
@@ -266,7 +266,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/get/lessonrequest/{id}:
+   * /api/lessonrequest/{id}:
    *   get:
    *     summary: Get lesson request by ID
    *     tags: [Lesson Request]
@@ -384,7 +384,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/delete/lessonrequest/{id}:
+   * /api/lessonrequest/{id}:
    *   delete:
    *     summary: Delete a lesson request by ID
    *     tags: [lesson]
@@ -451,7 +451,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/get/lessonrequest/filtered/{id}:
+   * /api/lessonrequest/filtered/{id}:
    *   get:
    *     summary: Get filtered lesson requests for a tutor
    *     tags: [Lesson Request]

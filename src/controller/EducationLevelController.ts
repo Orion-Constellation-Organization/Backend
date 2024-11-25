@@ -89,7 +89,7 @@ export class EducationLevelController {
 
   /**
    * @swagger
-   * /api/get/educationLevel:
+   * /api/educationLevel:
    *   get:
    *     summary: Get all education levels
    *     tags: [Education Level]

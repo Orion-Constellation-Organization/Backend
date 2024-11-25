@@ -80,7 +80,7 @@ export class SubjectController {
 
   /**
    * @swagger
-   * /api/get/subject:
+   * /api/subject:
    *   get:
    *     summary: Get all subjects
    *     tags: [Subject]

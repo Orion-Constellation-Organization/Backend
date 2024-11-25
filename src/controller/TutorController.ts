@@ -191,7 +191,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/get/tutor:
+   * /api/tutor:
    *   get:
    *     summary: Get all tutors
    *     tags: [Tutor]
@@ -317,7 +317,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/update/tutor:
+   * /api/tutor:
    *   patch:
    *     summary: Update tutor personal data
    *     tags: [Tutor]
@@ -469,7 +469,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/update/tutor/photo:
+   * /api/tutor/photo:
    *   patch:
    *     summary: Update tutor photo
    *     tags: [Tutor]
@@ -548,7 +548,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/get/tutor/{id}:
+   * /api/tutor/{id}:
    *   get:
    *     summary: Get tutor by ID
    *     tags: [Tutor]
