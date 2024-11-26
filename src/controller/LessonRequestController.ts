@@ -477,7 +477,7 @@ export class LessonRequestController {
    *                 properties:
    *                   ClassId:
    *                     type: integer
-   *                     example: 2
+   *                     example: 1
    *                   reason:
    *                     type: array
    *                     items:
@@ -495,6 +495,15 @@ export class LessonRequestController {
    *                     type: string
    *                     nullable: true
    *                     example: "Dificuldade em funções"
+   *                   subject:
+   *                      type: object
+   *                      properties:
+   *                        subjectId:
+   *                          type: integer
+   *                          example: 1
+   *                        subjectName:
+   *                          type: string
+   *                          example: biologia
    *                   student:
    *                     type: object
    *                     properties:
@@ -549,8 +558,12 @@ export class LessonRequestController {
   async getFilteredRequests(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const requests = await LessonRequestService.getFilteredRequests(id);
-      return res.status(200).json(requests);
+      const requests = await LessonRequestService.getFilteredRequests(
+        Number(id)
+      );
+      return res
+        .status(200)
+        .json(requests.map(LessonRequestService.formatLessonRequest));
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
