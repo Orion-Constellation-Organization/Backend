@@ -59,10 +59,19 @@ export class LessonRequestService {
     }
   }
 
-  static async getAllLessonRequests() {
+  static async getAllLessonRequests(
+    page: number,
+    size: number,
+    order: 'ASC' | 'DESC',
+    orderBy: string
+  ) {
     try {
-      const lessonRequests =
-        await LessonRequestRepository.getAllLessonRequests();
+      const lessonRequests = await LessonRequestRepository.getAllLessonRequests(
+        Number(page),
+        Number(size),
+        order.toUpperCase() as 'ASC' | 'DESC',
+        orderBy as string
+      );
 
       const formattedLessonRequests = lessonRequests.map((request) => ({
         classId: request.ClassId,
@@ -110,14 +119,24 @@ export class LessonRequestService {
     }
   }
 
-  static async getFilteredRequests(tutorId: number): Promise<LessonRequest[]> {
+  static async getFilteredRequests(
+    tutorId: number,
+    page: number,
+    size: number,
+    order: 'ASC' | 'DESC',
+    orderBy: string
+  ): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
     }
     const lessonRequests = await LessonRequestRepository.getFilteredRequests(
       tutor.subjects,
-      tutor.educationLevels
+      tutor.educationLevels,
+      page,
+      size,
+      order,
+      orderBy
     );
     if (lessonRequests.length === 0) {
       throw new AppError(EnumErrorMessages.ANY_LESSON_REQUEST_FOUND, 404);
