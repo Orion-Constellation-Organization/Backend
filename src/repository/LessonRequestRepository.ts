@@ -25,10 +25,21 @@ export class LessonRequestRepository {
     });
   }
 
-  static async getAllLessonRequests(): Promise<LessonRequest[]> {
+  static async getAllLessonRequests(
+    page: number,
+    size: number,
+    order: 'ASC' | 'DESC',
+    orderBy: string
+  ): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
+    const skip = (page - 1) * size;
     return repository.find({
-      relations: this.relations
+      relations: this.relations,
+      take: size,
+      skip: skip,
+      order: {
+        [orderBy]: order
+      }
     });
   }
 
@@ -51,9 +62,16 @@ export class LessonRequestRepository {
 
   static async getFilteredRequests(
     tutorSubjects: Subject[],
-    tutorEducationLevels: EducationLevel[]
+    tutorEducationLevels: EducationLevel[],
+    page: number,
+    size: number,
+    order: 'ASC' | 'DESC',
+    orderBy: string
   ): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
+
+    const skip = (page - 1) * size;
+
     return repository.find({
       where: {
         subject: In(tutorSubjects.map((subject) => subject.subjectId)),
@@ -64,7 +82,12 @@ export class LessonRequestRepository {
           )
         }
       },
-      relations: ['student', 'subject']
+      relations: ['student', 'subject'],
+      take: size,
+      skip: skip,
+      order: {
+        [orderBy]: order
+      }
     });
   }
 }
