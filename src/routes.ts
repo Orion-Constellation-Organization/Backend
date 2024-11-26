@@ -92,7 +92,7 @@ router.post(
 );
 
 router.get(
-  '/api/lessonrequest',
+  '/api/lessonrequest/page/:page/size/:size/order/:order/orderBy/:orderBy',
   authMiddleware(),
   new LessonRequestController().getAll
 );
@@ -109,7 +109,7 @@ router.delete(
 );
 
 router.get(
-  '/api/lessonrequest/filtered/:id',
+  '/api/lessonrequest/filtered/:id/page/:page/size/:size/order/:order/orderBy/:orderBy',
   authMiddleware(),
   new LessonRequestController().getFilteredRequests
 );
