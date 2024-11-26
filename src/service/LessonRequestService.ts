@@ -22,7 +22,8 @@ export class LessonRequestService {
         : null,
       tutor: lessonRequest.tutor
         ? TutorService.formatTutor(lessonRequest.tutor)
-        : null
+        : null,
+      subjectId: lessonRequest.student ? lessonRequest.student.subjects : null
     };
   }
 
@@ -109,7 +110,7 @@ export class LessonRequestService {
     }
   }
 
-  static async getFilteredRequests(tutorId) {
+  static async getFilteredRequests(tutorId: number): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
@@ -121,6 +122,6 @@ export class LessonRequestService {
     if (lessonRequests.length === 0) {
       throw new AppError(EnumErrorMessages.ANY_LESSON_REQUEST_FOUND, 404);
     }
-    return lessonRequests.map(LessonRequestService.formatLessonRequest);
+    return lessonRequests;
   }
 }
