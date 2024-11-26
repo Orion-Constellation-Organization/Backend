@@ -192,7 +192,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/lessonrequest:
+   * /api/lessonrequest:/page/{page}:/size/{size}:/order/{order}:/orderBy/{orderBy}:
    *   get:
    *     summary: Retrieve all lesson requests
    *     tags: [Lesson Request]
@@ -256,7 +256,13 @@ export class LessonRequestController {
    */
   async getAll(req: Request, res: Response) {
     try {
-      const lessonRequests = await LessonRequestService.getAllLessonRequests();
+      const { page, size, order, orderBy } = req.params;
+      const lessonRequests = await LessonRequestService.getAllLessonRequests(
+        Number(page),
+        Number(size),
+        order.toUpperCase() as 'ASC' | 'DESC',
+        orderBy as string
+      );
       return res.status(200).json(lessonRequests);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -387,7 +393,7 @@ export class LessonRequestController {
    * /api/lessonrequest/{id}:
    *   delete:
    *     summary: Delete a lesson request by ID
-   *     tags: [lesson]
+   *     tags: [Lesson Request]
    *     parameters:
    *       - name: id
    *         in: path
@@ -451,7 +457,7 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/lessonrequest/filtered/{id}:
+   * /api/lessonrequest/filtered/{id}:/page/{page}:/size/{size}:/order/{order}:/orderBy/{orderBy}:
    *   get:
    *     summary: Get filtered lesson requests for a tutor
    *     tags: [Lesson Request]
@@ -557,9 +563,13 @@ export class LessonRequestController {
    */
   async getFilteredRequests(req: Request, res: Response) {
     try {
-      const { id } = req.params;
+      const { id, page, size, order, orderBy } = req.params;
       const requests = await LessonRequestService.getFilteredRequests(
-        Number(id)
+        Number(id),
+        Number(page),
+        Number(size),
+        order.toUpperCase() as 'ASC' | 'DESC',
+        orderBy as string
       );
       return res
         .status(200)
