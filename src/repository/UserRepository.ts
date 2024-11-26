@@ -9,8 +9,8 @@ export class UserRepository {
     const studentRepository = MysqlDataSource.getRepository(Student);
 
     return (
-      (await tutorRepository.findOne({ where: { username } })) ||
-      (await studentRepository.findOne({ where: { username } }))
+      tutorRepository.findOne({ where: { username } }) ||
+      studentRepository.findOne({ where: { username } })
     );
   }
 
@@ -19,8 +19,8 @@ export class UserRepository {
     const studentRepository = MysqlDataSource.getRepository(Student);
 
     return (
-      (await tutorRepository.findOne({ where: { email } })) ||
-      (await studentRepository.findOne({ where: { email } }))
+      tutorRepository.findOne({ where: { email } }) ||
+      studentRepository.findOne({ where: { email } })
     );
   }
 
@@ -32,7 +32,7 @@ export class UserRepository {
       userType === EnumUserType.TUTOR
         ? MysqlDataSource.getRepository(Tutor)
         : MysqlDataSource.getRepository(Student);
-    return await repository.findOne({
+    return repository.findOne({
       where: { email },
       select: [
         'id',

@@ -17,12 +17,12 @@ export class StudentRepository extends UserRepository {
 
   static async saveStudent(student: Student): Promise<Student> {
     const repository = MysqlDataSource.getRepository(Student);
-    return await repository.save(student);
+    return repository.save(student);
   }
 
   static async findAllStudents() {
     const repository = MysqlDataSource.getRepository(Student);
-    return await repository.find({
+    return repository.find({
       select: Object.fromEntries(
         this.selectFields.map((field) => [field, true])
       ),
@@ -32,7 +32,7 @@ export class StudentRepository extends UserRepository {
 
   static async findStudentById(id: number) {
     const repository = MysqlDataSource.getRepository(Student);
-    return await repository.findOne({
+    return repository.findOne({
       where: { id },
       select: Object.fromEntries(
         this.selectFields.map((field) => [field, true])

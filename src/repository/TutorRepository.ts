@@ -19,17 +19,17 @@ export class TutorRepository extends UserRepository {
 
   static async saveTutor(tutor: Tutor): Promise<Tutor> {
     const repository = MysqlDataSource.getRepository(Tutor);
-    return await repository.save(tutor);
+    return repository.save(tutor);
   }
 
   static async findTutorByCpf(cpf: string) {
     const repository = MysqlDataSource.getRepository(Tutor);
-    return await repository.findOne({ where: { cpf } });
+    return repository.findOne({ where: { cpf } });
   }
 
   static async findAllTutors() {
     const repository = MysqlDataSource.getRepository(Tutor);
-    return await repository.find({
+    return repository.find({
       select: Object.fromEntries(
         this.selectFields.map((field) => [field, true])
       ),
@@ -39,7 +39,7 @@ export class TutorRepository extends UserRepository {
 
   static async findTutorById(id: number) {
     const repository = MysqlDataSource.getRepository(Tutor);
-    return await repository.findOne({
+    return repository.findOne({
       where: { id },
       select: Object.fromEntries(
         this.selectFields.map((field) => [field, true])
