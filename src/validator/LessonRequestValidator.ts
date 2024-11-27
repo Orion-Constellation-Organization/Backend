@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import { EnumReasonName } from '../enum/EnumReasonName';
 import { BaseValidator } from './BaseValidator';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
@@ -159,6 +159,30 @@ export class LessonRequestValidator {
         .withMessage(EnumErrorMessages.ADDITIONAL_INFO_STRING)
         .isLength({ max: 200 })
         .withMessage(EnumErrorMessages.ADDITIONAL_INFO_LENGTH)
+    ]);
+  }
+  static getLessonRequests() {
+    return BaseValidator.validationList([
+      query('id')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage(EnumErrorMessages.TUTOR_ID_INVALID),
+      query('page')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage(EnumErrorMessages.INVALID_PAGE),
+      query('size')
+        .optional()
+        .isInt({ min: 1 })
+        .withMessage(EnumErrorMessages.INVALID_SIZE),
+      query('order')
+        .optional()
+        .isIn(['ASC', 'DESC'])
+        .withMessage(EnumErrorMessages.ORDER_INVALID),
+      query('orderBy')
+        .optional()
+        .isString()
+        .withMessage(EnumErrorMessages.ORDER_BY_INVALID)
     ]);
   }
 }
