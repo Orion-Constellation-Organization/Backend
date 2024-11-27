@@ -94,6 +94,7 @@ router.post(
 router.get(
   '/api/lessonrequest',
   authMiddleware(),
+  LessonRequestValidator.getLessonRequests(),
   new LessonRequestController().getLessonRequests
 );
 
