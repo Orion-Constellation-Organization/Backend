@@ -27,7 +27,7 @@ router.post(
   new TutorController().create
 );
 
-router.get('/api/get/tutor', authMiddleware(), new TutorController().getAll);
+router.get('/api/tutor', authMiddleware(), new TutorController().getAll);
 
 router.patch(
   '/api/tutor',
@@ -92,9 +92,9 @@ router.post(
 );
 
 router.get(
-  '/api/lessonrequest/page/:page/size/:size/order/:order/orderBy/:orderBy',
+  '/api/lessonrequest',
   authMiddleware(),
-  new LessonRequestController().getAll
+  new LessonRequestController().getLessonRequests
 );
 
 router.get(
@@ -106,12 +106,6 @@ router.get(
 router.delete(
   '/api/lessonrequest/:id',
   new LessonRequestController().DeleteById
-);
-
-router.get(
-  '/api/lessonrequest/filtered/:id/page/:page/size/:size/order/:order/orderBy/:orderBy',
-  authMiddleware(),
-  new LessonRequestController().getFilteredRequests
 );
 
 // Subject route
