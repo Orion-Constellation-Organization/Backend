@@ -5,16 +5,22 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255, unique: true, nullable: false })
+  @Column({
+    type: 'varchar',
+    length: 255,
+    unique: true,
+    nullable: false,
+    select: false
+  })
   username: string;
 
   @Column({ type: 'varchar', length: 255, unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false, select: false })
   password: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 255, nullable: false, select: false })
   salt: string;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
