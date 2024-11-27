@@ -85,7 +85,7 @@ router.post('/api/login', AuthValidator.login(), new AuthController().login);
 
 // Lesson Request route
 router.post(
-  '/api/register/lessonrequest',
+  '/api/lessonrequest',
   authMiddleware(),
   LessonRequestValidator.createLessonRequest(),
   new LessonRequestController().create
