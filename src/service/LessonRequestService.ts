@@ -59,36 +59,6 @@ export class LessonRequestService {
     }
   }
 
-  static async getAllLessonRequests(
-    page: number,
-    size: number,
-    order: 'ASC' | 'DESC',
-    orderBy: string
-  ) {
-    try {
-      const lessonRequests = await LessonRequestRepository.getAllLessonRequests(
-        Number(page),
-        Number(size),
-        order.toUpperCase() as 'ASC' | 'DESC',
-        orderBy as string
-      );
-
-      const formattedLessonRequests = lessonRequests.map((request) => ({
-        classId: request.ClassId,
-        reason: request.reason,
-        preferredDates: request.preferredDates,
-        status: request.status,
-        additionalInfo: request.additionalInfo,
-        subjectId: request.subject?.subjectId,
-        studentId: request.student?.id
-      }));
-
-      return formattedLessonRequests;
-    } catch (error) {
-      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
-    }
-  }
-
   static async getLessonRequestById(id: number) {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(
@@ -123,7 +93,7 @@ export class LessonRequestService {
     tutorId: number,
     page: number,
     size: number,
-    order: 'ASC' | 'DESC',
+    order: string,
     orderBy: string
   ): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
@@ -135,7 +105,7 @@ export class LessonRequestService {
       tutor.educationLevels,
       page,
       size,
-      order,
+      order as 'ASC' | 'DESC',
       orderBy
     );
     if (lessonRequests.length === 0) {
