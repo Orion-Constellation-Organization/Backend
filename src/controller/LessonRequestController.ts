@@ -350,10 +350,10 @@ export class LessonRequestController {
    *       - BearerAuth: []
    *     parameters:
    *       - name: id
-   *          in: path
-   *          required: true
-   *          description: ID of the lesson request
-   *          schema:
+   *         in: path
+   *         required: true
+   *         description: ID of the lesson request
+   *         schema:
    *           type: integer
    *           example: 1
    *     responses:
