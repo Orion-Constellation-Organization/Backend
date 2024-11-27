@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 
 export class LessonRequestController {
   /**
@@ -192,15 +193,58 @@ export class LessonRequestController {
 
   /**
    * @swagger
-   * /api/lessonrequest:/page/{page}:/size/{size}:/order/{order}:/orderBy/{orderBy}:
+   * /api/lessonrequest:
    *   get:
-   *     summary: Retrieve all lesson requests
+   *     summary: Retrieve lesson requests (all or filtered)
    *     tags: [Lesson Request]
    *     security:
    *       - BearerAuth: []
+   *     parameters:
+   *       - name: filtered
+   *         in: query
+   *         required: false
+   *         description: Whether to filter the lesson requests (true or false)
+   *         schema:
+   *           type: boolean
+   *           example: true
+   *       - name: id
+   *         in: query
+   *         required: false
+   *         description: ID of the tutor (required if filtered is true)
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: false
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: ClassId
    *     responses:
    *       '200':
-   *         description: List of lesson requests retrieved successfully
+   *         description: Lesson requests retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -220,7 +264,7 @@ export class LessonRequestController {
    *                     type: array
    *                     items:
    *                       type: string
-   *                     example: ["29/12/2025 às 23:45"]
+   *                     example: ["2025-12-29T23:45:00Z"]
    *                   status:
    *                     type: string
    *                     example: "pendente"
@@ -233,6 +277,16 @@ export class LessonRequestController {
    *                   studentId:
    *                     type: integer
    *                     example: 1
+   *       '404':
+   *         description: Tutor not found or no subjects associated with the tutor
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O Tutor não possui matérias cadastradas."
    *       '401':
    *         description: Unauthorized, missing or invalid token
    *         content:
@@ -254,15 +308,31 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  async getAll(req: Request, res: Response) {
+
+  async getLessonRequests(req: Request, res: Response) {
     try {
-      const { page, size, order, orderBy } = req.params;
-      const lessonRequests = await LessonRequestService.getAllLessonRequests(
-        Number(page),
-        Number(size),
-        order.toUpperCase() as 'ASC' | 'DESC',
-        orderBy as string
-      );
+      const tutorId = req.query.id ? Number(req.query.id) : null;
+      const page = Number(req.query.page) || 1;
+      const size = Number(req.query.size) || 10;
+      const order: string = (req.query.order as string)?.toUpperCase() || 'ASC';
+      const orderBy: string = (req.query.orderBy as string) || 'ClassId';
+      const filtered: boolean = req.query.filtered === 'true';
+
+      const lessonRequests = filtered
+        ? await LessonRequestService.getFilteredRequests(
+            Number(tutorId),
+            page,
+            size,
+            order,
+            orderBy
+          )
+        : await LessonRequestRepository.getAllLessonRequests(
+            page,
+            size,
+            order as 'ASC' | 'DESC',
+            orderBy
+          );
+
       return res.status(200).json(lessonRequests);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -280,10 +350,10 @@ export class LessonRequestController {
    *       - BearerAuth: []
    *     parameters:
    *       - name: id
-   *         in: path
-   *         required: true
-   *         description: ID of the lesson request
-   *         schema:
+   *          in: path
+   *          required: true
+   *          description: ID of the lesson request
+   *          schema:
    *           type: integer
    *           example: 1
    *     responses:
@@ -449,131 +519,6 @@ export class LessonRequestController {
         Number(classId)
       );
       return res.status(204).end().json({ deletedRequest });
-    } catch (error) {
-      const { statusCode, message } = handleError(error);
-      return res.status(statusCode).json({ message });
-    }
-  }
-
-  /**
-   * @swagger
-   * /api/lessonrequest/filtered/{id}:/page/{page}:/size/{size}:/order/{order}:/orderBy/{orderBy}:
-   *   get:
-   *     summary: Get filtered lesson requests for a tutor
-   *     tags: [Lesson Request]
-   *     security:
-   *       - BearerAuth: []
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         required: true
-   *         description: ID of the tutor
-   *         schema:
-   *           type: integer
-   *           example: 1
-   *     responses:
-   *       '200':
-   *         description: Filtered lesson requests retrieved successfully
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: array
-   *               items:
-   *                 type: object
-   *                 properties:
-   *                   ClassId:
-   *                     type: integer
-   *                     example: 1
-   *                   reason:
-   *                     type: array
-   *                     items:
-   *                       type: string
-   *                       example: "reforço"
-   *                   preferredDates:
-   *                     type: array
-   *                     items:
-   *                       type: string
-   *                       example: "2024-12-21 12:31"
-   *                   status:
-   *                     type: string
-   *                     example: "pendente"
-   *                   additionalInfo:
-   *                     type: string
-   *                     nullable: true
-   *                     example: "Dificuldade em funções"
-   *                   subject:
-   *                      type: object
-   *                      properties:
-   *                        subjectId:
-   *                          type: integer
-   *                          example: 1
-   *                        subjectName:
-   *                          type: string
-   *                          example: biologia
-   *                   student:
-   *                     type: object
-   *                     properties:
-   *                       id:
-   *                         type: integer
-   *                         example: 1
-   *                       username:
-   *                         type: string
-   *                         example: "isaacbpm"
-   *                       fullName:
-   *                         type: string
-   *                         example: "isaac"
-   *                       birthDate:
-   *                         type: string
-   *                         format: date
-   *                         example: "2004-03-26"
-   *                   tutor:
-   *                     type: object
-   *                     nullable: true
-   *                     example: null
-   *       '404':
-   *         description: Tutor not found or no subjects associated with the tutor
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "O Tutor não possui matérias cadastradas"
-   *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
-   *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
-   */
-  async getFilteredRequests(req: Request, res: Response) {
-    try {
-      const { id, page, size, order, orderBy } = req.params;
-      const requests = await LessonRequestService.getFilteredRequests(
-        Number(id),
-        Number(page),
-        Number(size),
-        order.toUpperCase() as 'ASC' | 'DESC',
-        orderBy as string
-      );
-      return res
-        .status(200)
-        .json(requests.map(LessonRequestService.formatLessonRequest));
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
