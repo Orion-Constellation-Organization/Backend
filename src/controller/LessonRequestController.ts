@@ -7,7 +7,7 @@ import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 export class LessonRequestController {
   /**
    * @swagger
-   * /api/register/lessonrequest:
+   * /api/lessonrequest:
    *   post:
    *     summary: Create a new lesson request
    *     tags: [Lesson Request]
