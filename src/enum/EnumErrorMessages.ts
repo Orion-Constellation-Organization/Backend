@@ -56,7 +56,10 @@ export enum EnumErrorMessages {
   PREFERRED_DATES_REQUIRED = 'Datas preferidas são obrigatórias. Mínimo de 1 e máximo de 3.',
   ADDITIONAL_INFO_STRING = 'Informações adicionais devem ser uma string.',
   ADDITIONAL_INFO_LENGTH = 'Informações adicionais deve ter no máximo 200 caracteres.',
-
+  INVALID_PAGE = 'Página inválida.',
+  INVALID_SIZE = 'Tamanho inválido.',
+  ORDER_BY_INVALID = 'Ordenação inválida.',
+  ORDER_INVALID = 'Ordem inválida.',
   // Education level errors
   EDUCATION_LEVEL_NOT_FOUND = 'Nível de ensino não encontrado.',
   EDUCATION_LEVEL_REQUIRED = 'Níveis de ensino são obrigatórios.',
