@@ -42,13 +42,10 @@ export class LessonRequestController {
    */
   async create(req: Request, res: Response) {
     try {
-      const lessonRequest = await LessonRequestService.createLessonRequest(
-        req.body
-      );
-
+      const lessonRequest = await LessonRequestService.createLessonRequest(req.body);
       return res.status(201).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CREATED,
-        lessonRequest
+        lessonRequest,
       });
     } catch (error) {
       const { statusCode, message } = handleError(error);
