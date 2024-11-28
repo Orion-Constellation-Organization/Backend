@@ -4,7 +4,7 @@ import { LessonRequestService } from '../../service/LessonRequestService';
 
 jest.mock('../../service/LessonRequestService');
 
-describe('LessonRequestController - deleteById', () => {
+describe('LessonRequestController', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
   let controller: LessonRequestController;
@@ -20,39 +20,42 @@ describe('LessonRequestController - deleteById', () => {
     jest.clearAllMocks();
   });
 
-  it('deve retornar 400 se o parâmetro id for inválido', async () => {
-    req.params.id = 'invalid';
+  describe('cancelTutorLessonRequest', () => {
+    it('deve retornar 400 se os parâmetros classId ou tutorId forem inválidos', async () => {
+      req.query = { classId: 'invalid', tutorId: 'invalid' };
 
-    await controller.deleteById(req as Request, res as Response);
+      await controller.cancelTutorLessonRequest(req as Request, res as Response);
 
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Parâmetro inválido' });
-  });
+      expect(res.status).toHaveBeenCalledWith(400);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Parâmetro inválido' });
+    });
 
-  it('deve retornar 204 se a exclusão for bem-sucedida', async () => {
-    req.params.id = '1';
+    it('deve retornar 200 se o cancelamento for bem-sucedido', async () => {
+      req.query = { classId: '1', tutorId: '2' };
 
-    jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockResolvedValueOnce();
+      jest.spyOn(LessonRequestService, 'cancelTutorLessonRequestById').mockResolvedValueOnce();
 
-    await controller.deleteById(req as Request, res as Response);
+      await controller.cancelTutorLessonRequest(req as Request, res as Response);
 
-    expect(LessonRequestService.deleteLessonRequestById).toHaveBeenCalledWith(1);
-    expect(res.status).toHaveBeenCalledWith(204);
-    expect(res.end).toHaveBeenCalled();
-    expect(res.json).not.toHaveBeenCalled(); // Certifique-se de que nenhum JSON foi enviado
-  });
+      expect(LessonRequestService.cancelTutorLessonRequestById).toHaveBeenCalledWith(1, 2);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Aula cancelada com sucesso!'
+      });
+    });
 
-  it('deve retornar 500 se ocorrer um erro durante a exclusão', async () => {
-    req.params.id = '1';
+    it('deve retornar 500 se ocorrer um erro durante o cancelamento', async () => {
+      req.query = { classId: '1', tutorId: '2' };
 
-    jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockRejectedValueOnce(new Error('Erro interno do servidor'));
+      jest.spyOn(LessonRequestService, 'cancelTutorLessonRequestById').mockRejectedValueOnce(new Error('Erro interno do servidor'));
 
-    await controller.deleteById(req as Request, res as Response);
+      await controller.cancelTutorLessonRequest(req as Request, res as Response);
 
-    expect(LessonRequestService.deleteLessonRequestById).toHaveBeenCalledWith(1);
-    expect(res.status).toHaveBeenCalledWith(500);
-    expect(res.json).toHaveBeenCalledWith({
-      message: 'Erro interno do servidor.'
+      expect(LessonRequestService.cancelTutorLessonRequestById).toHaveBeenCalledWith(1, 2);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Erro interno do servidor.'
+      });
     });
   });
 });
