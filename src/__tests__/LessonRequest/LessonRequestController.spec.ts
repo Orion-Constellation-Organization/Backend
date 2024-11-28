@@ -4,7 +4,7 @@ import { LessonRequestService } from '../../service/LessonRequestService';
 
 jest.mock('../../service/LessonRequestService');
 
-describe('LessonRequestController - DeleteById', () => {
+describe('LessonRequestController - deleteById', () => {
   let req: Partial<Request>;
   let res: Partial<Response>;
   let controller: LessonRequestController;
@@ -23,7 +23,7 @@ describe('LessonRequestController - DeleteById', () => {
   it('deve retornar 400 se o parâmetro id for inválido', async () => {
     req.params.id = 'invalid';
 
-    await controller.DeleteById(req as Request, res as Response);
+    await controller.deleteById(req as Request, res as Response);
 
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({ message: 'Parâmetro inválido' });
@@ -34,11 +34,12 @@ describe('LessonRequestController - DeleteById', () => {
 
     jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockResolvedValueOnce();
 
-    await controller.DeleteById(req as Request, res as Response);
+    await controller.deleteById(req as Request, res as Response);
 
     expect(LessonRequestService.deleteLessonRequestById).toHaveBeenCalledWith(1);
     expect(res.status).toHaveBeenCalledWith(204);
     expect(res.end).toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled(); // Certifique-se de que nenhum JSON foi enviado
   });
 
   it('deve retornar 500 se ocorrer um erro durante a exclusão', async () => {
@@ -46,7 +47,7 @@ describe('LessonRequestController - DeleteById', () => {
 
     jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockRejectedValueOnce(new Error('Erro interno do servidor'));
 
-    await controller.DeleteById(req as Request, res as Response);
+    await controller.deleteById(req as Request, res as Response);
 
     expect(LessonRequestService.deleteLessonRequestById).toHaveBeenCalledWith(1);
     expect(res.status).toHaveBeenCalledWith(500);
