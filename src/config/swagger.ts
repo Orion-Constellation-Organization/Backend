@@ -14,13 +14,41 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
         description: 'Servidor Local'
       }
     ],
-    tags: [{ name: 'Auth', description: 'Rotas relacionadas à autenticação' }],
+    tags: [
+      { name: 'Auth', description: 'Rotas relacionadas à autenticação' },
+      { name: 'Education Level', description: 'Rotas relacionadas aos níveis de ensino' }
+    ],
     components: {
       securitySchemes: {
         BearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
+        }
+      },
+      schemas: {
+        EducationLevel: {
+          type: 'object',
+          properties: {
+            educationId: {
+              type: 'integer',
+              example: 1
+            },
+            levelType: {
+              type: 'string',
+              example: 'Fundamental',
+              description: 'Tipo do nível de ensino (fundamental, médio, pré-vestibular)'
+            }
+          }
+        },
+        ErrorResponse: {
+          type: 'object',
+          properties: {
+            message: {
+              type: 'string',
+              example: 'Erro interno do servidor.'
+            }
+          }
         }
       }
     },
