@@ -1,7 +1,9 @@
+version: "3.7"
+
 services:
-  orion-constellation-api:
-    container_name: orion-constellation-api
-    image: orion-constellation-api:dev
+  reforca-api:
+    container_name: reforca-api
+    image: reforca-api:dev
     build:
       context: .
       target: development
@@ -10,43 +12,34 @@ services:
       - /app/node_modules
     ports:
       - 4444:4444
-    command: sh -c "npx typeorm-ts-node-commonjs migration:run -d src/config/database.ts && npm run start:dev"
+    command: npm run start:dev
     environment:
       NODE_ENV: development
       SERVER_PORT: 4444
-      DB_DATABASE: orion-constellation
-      DB_CONNECTION_STRING: mysql://orion_constellation_root:j5m966qp7jiypfda@orion-constellation-mysql:3306
-      JWT_SECRET: ${JWT_SECRET}
+      DB_DATABASE: reforca
+      DB_CONNECTION_STRING: mongodb://reforca_root:j5m966qp7jiypfda@reforca-mongo:27017/reforca?authSource=admin
+      JWT_SECRET: mySuperSecretKey12345
     networks:
-      - orion-constellation-connect
-    env_file:
-      - .env
-    depends_on:
-      orion-constellation-mysql:
-        condition: service_healthy
+      - reforca-connect
 
-  orion-constellation-mysql:
-    container_name: orion-constellation-mysql
-    image: mysql
+  reforca-mongo:
+    container_name: reforca-mongo
+    image: mongo:4.4
     environment:
-      MYSQL_USER: orion_constellation_root
-      MYSQL_PASSWORD: j5m966qp7jiypfda
-      MYSQL_ROOT_PASSWORD: m45ug42qkr5pdzbb
-      MYSQL_DATABASE: orion-constellation
+      MONGO_INITDB_ROOT_USERNAME: reforca_root
+      MONGO_INITDB_ROOT_PASSWORD: j5m966qp7jiypfda
+      MONGO_INITDB_DATABASE: reforca
     ports:
-      - 3306:3306
+      - 27017:27017
     volumes:
-      - ~/docker/volumes/OrionConstellationApi_MySQL:/var/lib/mysql
+      - mongo-data:/data/db
     networks:
-      - orion-constellation-connect
-    logging:
-      driver: none
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 5s
-      timeout: 3s
-      retries: 3
+      - reforca-connect
 
 networks:
-  orion-constellation-connect:
+  reforca-connect:
     driver: bridge
+
+volumes:
+  mongo-data:
+  
