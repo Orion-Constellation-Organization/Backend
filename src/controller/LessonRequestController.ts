@@ -326,7 +326,7 @@ export class LessonRequestController {
             order,
             orderBy
           )
-        : await LessonRequestRepository.getAllLessonRequests(
+        : await LessonRequestRepository.listLessonRequests(
             page,
             size,
             order as 'ASC' | 'DESC',

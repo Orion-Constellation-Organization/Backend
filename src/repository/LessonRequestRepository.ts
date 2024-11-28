@@ -25,7 +25,7 @@ export class LessonRequestRepository {
     });
   }
 
-  static async getAllLessonRequests(
+  static async listLessonRequests(
     page: number,
     size: number,
     order: 'ASC' | 'DESC',
