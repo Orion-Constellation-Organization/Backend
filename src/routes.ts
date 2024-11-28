@@ -33,21 +33,12 @@ router.get('/', new HomeController().hello);
  * @middleware TutorValidator.createTutor
  * @controller TutorController.create
  */
-router.post(
-  '/api/tutor',
-  TutorValidator.createTutor(),
-  new TutorController().create
-);
+router.post('/api/tutor', TutorValidator.createTutor(), new TutorController().create);
 
 router.get('/api/tutor', authMiddleware(), new TutorController().getAll);
 router.get('/api/tutor/:id', authMiddleware(), new TutorController().getById);
 
-router.patch(
-  '/api/tutor',
-  authMiddleware(),
-  UpdatePersonalDataValidator,
-  new TutorController().updatePersonalData
-);
+router.patch('/api/tutor', authMiddleware(), UpdatePersonalDataValidator, new TutorController().updatePersonalData);
 
 router.patch(
   '/api/photo',
@@ -57,20 +48,12 @@ router.patch(
   new TutorController().updatePhoto
 );
 
-router.patch(
-  '/api/tutor-accept-lesson',
-  authMiddleware(),
-  new TutorController().acceptLessonRequest
-);
+router.patch('/api/tutor-accept-lesson', authMiddleware(), new TutorController().acceptLessonRequest);
 
 // Students routes
 router.get('/api/student', authMiddleware(), new StudentController().getAll);
 
-router.post(
-  '/api/student',
-  StudentValidator.createStudent(),
-  new StudentController().create
-);
+router.post('/api/student', StudentValidator.createStudent(), new StudentController().create);
 
 /**
  * Get All Students
@@ -80,11 +63,7 @@ router.post(
  * @middleware authMiddleware
  * @controller StudentController.getAll
  */
-router.get(
-  '/api/get/student',
-  authMiddleware(),
-  new StudentController().getAll
-);
+router.get('/api/get/student', authMiddleware(), new StudentController().getAll);
 
 /**
  * Get Student by ID
@@ -94,11 +73,7 @@ router.get(
  * @middleware authMiddleware
  * @controller StudentController.getById
  */
-router.get(
-  '/api/student/:id',
-  authMiddleware(),
-  new StudentController().getById
-);
+router.get('/api/student/:id', authMiddleware(), new StudentController().getById);
 
 /**
  * Get Pending Lessons by Student ID
@@ -108,11 +83,7 @@ router.get(
  * @middleware authMiddleware
  * @controller StudentController.getPendingLessonByStudentId
  */
-router.get(
-  '/api/student-lesson-status',
-  authMiddleware(),
-  new StudentController().getStudentLessons
-);
+router.get('/api/student-lesson-status', authMiddleware(), new StudentController().getStudentLessons);
 
 /**
  * Register Education Level
@@ -122,19 +93,11 @@ router.get(
  * @middleware authMiddleware
  * @controller EducationLevelController.create
  */
-router.post(
-  '/api/educationlevel',
-  authMiddleware(),
-  new EducationLevelController().create
-);
+router.post('/api/educationlevel', authMiddleware(), new EducationLevelController().create);
 
 router.get('/api/educationlevel', new EducationLevelController().getAll);
 
-router.patch(
-  '/api/student-confirm-lesson',
-  authMiddleware(),
-  new StudentController().confirmLessonRequest
-);
+router.patch('/api/student-confirm-lesson', authMiddleware(), new StudentController().confirmLessonRequest);
 
 /**
  * User Login
@@ -154,12 +117,7 @@ router.post('/api/login', AuthValidator.login(), new AuthController().login);
  * @middleware authMiddleware, LessonRequestValidator.createLessonRequest
  * @controller LessonRequestController.create
  */
-router.post(
-  '/api/lessonrequest',
-  authMiddleware(),
-  LessonRequestValidator.createLessonRequest(),
-  new LessonRequestController().create
-);
+router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), new LessonRequestController().create);
 
 /**
  * Get All Lesson Requests
@@ -169,11 +127,7 @@ router.post(
  * @middleware authMiddleware
  * @controller LessonRequestController.getAll
  */
-router.get(
-  '/api/lessonrequest',
-  authMiddleware(),
-  new LessonRequestController().getAll
-);
+router.get('/api/lessonrequest', authMiddleware(), new LessonRequestController().getAll);
 
 /**
  * Get Lesson Request by ID
@@ -183,11 +137,7 @@ router.get(
  * @middleware authMiddleware
  * @controller LessonRequestController.getById
  */
-router.get(
-  '/api/lessonrequest/:id',
-  authMiddleware(),
-  new LessonRequestController().getById
-);
+router.get('/api/lessonrequest/:id', authMiddleware(), new LessonRequestController().getById);
 
 /**
  * Delete Lesson Request by ID
@@ -197,22 +147,11 @@ router.get(
  * @middleware authMiddleware
  * @controller LessonRequestController.deleteById
  */
-router.delete(
-  '/api/lessonrequest/:id',
-  new LessonRequestController().DeleteById
-);
+router.delete('/api/lessonrequest/:id', new LessonRequestController().DeleteById);
 
-router.patch(
-  '/api/lessonrequest/:lessonId',
-  authMiddleware(),
-  new LessonRequestController().updateLesson
-);
+router.patch('/api/lessonrequest/:lessonId', authMiddleware(), new LessonRequestController().updateLesson);
 
-router.delete(
-  '/api/lessonrequest-cancel',
-  authMiddleware(),
-  new LessonRequestController().cancelTutorLessonRequest
-);
+router.delete('/api/lessonrequest-cancel', authMiddleware(), new LessonRequestController().cancelTutorLessonRequest);
 
 // Subject route
 router.post('/api/subject', authMiddleware(), new SubjectController().create);

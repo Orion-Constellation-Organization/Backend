@@ -21,9 +21,6 @@ services:
       - orion-constellation-connect
     env_file:
       - .env
-    depends_on:
-      orion-constellation-mysql:
-        condition: service_healthy
 
   orion-constellation-mysql:
     container_name: orion-constellation-mysql
@@ -36,17 +33,13 @@ services:
     ports:
       - 3306:3306
     volumes:
-      - ~/docker/volumes/OrionConstellationApi_MySQL:/var/lib/mysql
+      - mysql-data:/data/db
     networks:
       - orion-constellation-connect
-    logging:
-      driver: none
-    healthcheck:
-      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
-      interval: 5s
-      timeout: 3s
-      retries: 3
 
 networks:
   orion-constellation-connect:
     driver: bridge
+
+volumes:
+  mysql-data:

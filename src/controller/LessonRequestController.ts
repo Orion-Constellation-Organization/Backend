@@ -45,7 +45,7 @@ export class LessonRequestController {
       const lessonRequest = await LessonRequestService.createLessonRequest(req.body);
       return res.status(201).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CREATED,
-        lessonRequest,
+        lessonRequest
       });
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -118,9 +118,7 @@ export class LessonRequestController {
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
-      const lesson = await LessonRequestService.getLessonRequestById(
-        Number(id)
-      );
+      const lesson = await LessonRequestService.getLessonRequestById(Number(id));
 
       return res.status(200).json(lesson);
     } catch (error) {

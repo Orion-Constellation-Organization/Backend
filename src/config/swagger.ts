@@ -38,12 +38,7 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
               type: 'array',
               items: {
                 type: 'string',
-                enum: [
-                  'reforço',
-                  'prova ou trabalho',
-                  'correção de exercício',
-                  'outro'
-                ]
+                enum: ['reforço', 'prova ou trabalho', 'correção de exercício', 'outro']
               },
               example: ['reforço']
             },
