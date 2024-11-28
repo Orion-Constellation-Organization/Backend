@@ -108,9 +108,6 @@ export class LessonRequestService {
       order as 'ASC' | 'DESC',
       orderBy
     );
-    if (lessonRequests.length === 0) {
-      throw new AppError(EnumErrorMessages.ANY_LESSON_REQUEST_FOUND, 404);
-    }
     return lessonRequests;
   }
 }
