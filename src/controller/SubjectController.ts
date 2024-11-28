@@ -17,12 +17,7 @@ export class SubjectController {
    *       content:
    *         application/json:
    *           schema:
-   *             type: object
-   *             properties:
-   *               subjectName:
-   *                 type: string
-   *                 description: Name of the subject
-   *                 example: "Matemática"
+   *             $ref: '#/components/schemas/Subject'
    *     responses:
    *       '201':
    *         description: Subject created successfully
@@ -35,35 +30,11 @@ export class SubjectController {
    *                   type: string
    *                   example: "Matéria criada com sucesso!"
    *       '400':
-   *         description: Subject name is required
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Nome da matéria é obrigatório."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async create(req: Request, res: Response) {
     try {
@@ -94,34 +65,11 @@ export class SubjectController {
    *             schema:
    *               type: array
    *               items:
-   *                 type: object
-   *                 properties:
-   *                   subjectId:
-   *                     type: integer
-   *                     example: 1
-   *                   subjectName:
-   *                     type: string
-   *                     example: "Matemática"
+   *                 $ref: '#/components/schemas/Subject'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async getAll(req: Request, res: Response) {
     try {

@@ -23,53 +23,20 @@ export class EducationLevelController {
    *                 type: string
    *                 enum: [fundamental, medio, pre-vestibular]
    *                 description: Type of education level
+   *                 example: "fundamental"
    *     responses:
    *       '201':
    *         description: Education level created successfully
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 educationId:
-   *                   type: integer
-   *                   example: 1
-   *                 levelType:
-   *                   type: string
-   *                   example: "Fundamental"
-   *                 message:
-   *                   type: string
-   *                   example: "Nível de ensino criado com sucesso!"
+   *               $ref: '#/components/schemas/EducationLevel'
    *       '400':
-   *         description: Level type is required
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Nível de ensino é obrigatório."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async create(req: Request, res: Response) {
     const { levelType } = req.body;
@@ -103,34 +70,11 @@ export class EducationLevelController {
    *             schema:
    *               type: array
    *               items:
-   *                 type: object
-   *                 properties:
-   *                   educationId:
-   *                     type: integer
-   *                     example: 1
-   *                   levelType:
-   *                     type: string
-   *                     example: "Fundamental"
+   *                 $ref: '#/components/schemas/EducationLevel'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async getAll(req: Request, res: Response) {
     try {

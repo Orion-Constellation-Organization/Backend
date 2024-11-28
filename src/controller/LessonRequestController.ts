@@ -17,33 +17,7 @@ export class LessonRequestController {
    *       content:
    *         application/json:
    *           schema:
-   *             type: object
-   *             properties:
-   *               reason:
-   *                 type: array
-   *                 items:
-   *                   type: string
-   *                   enum: ['reforço', 'prova ou trabalho', 'correção de exercício', 'outro']
-   *                 example: ["reforço"]
-   *               preferredDates:
-   *                 type: array
-   *                 items:
-   *                   type: string
-   *                 description: Preferred dates for the lesson
-   *                 example: ["22/12/2024 às 10:00"]
-   *               subjectId:
-   *                 type: integer
-   *                 description: ID of the subject
-   *                 example: 1
-   *               additionalInfo:
-   *                 type: string
-   *                 description: Additional information
-   *                 maxLength: 200
-   *                 example: "Looking for a tutor with experience in calculus."
-   *               studentId:
-   *                 type: integer
-   *                 description: ID of the student
-   *                 example: 1
+   *             $ref: '#/components/schemas/LessonRequest'
    *     responses:
    *       '201':
    *         description: Lesson request created successfully
@@ -56,123 +30,15 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Aula criada com sucesso!"
    *                 lessonRequest:
-   *                   type: object
-   *                   properties:
-   *                     reason:
-   *                       type: array
-   *                       items:
-   *                         type: string
-   *                       example: ["reforço"]
-   *                     preferredDates:
-   *                       type: array
-   *                       items:
-   *                         type: string
-   *                       example: ["2025-12-25 23:45"]
-   *                     additionalInfo:
-   *                       type: string
-   *                       example: "Looking for a tutor with experience in calculus."
-   *                     status:
-   *                       type: string
-   *                       example: "pendente"
-   *                     subject:
-   *                       type: object
-   *                       properties:
-   *                         subjectId:
-   *                           type: integer
-   *                           example: 1
-   *                         subjectName:
-   *                           type: string
-   *                           example: "Biologia"
-   *                     student:
-   *                       type: object
-   *                       properties:
-   *                         id:
-   *                           type: integer
-   *                           example: 2
-   *                         username:
-   *                           type: string
-   *                           example: "Jose123"
-   *                         fullName:
-   *                           type: string
-   *                           example: "Jose Silva"
-   *                         birthDate:
-   *                           type: string
-   *                           format: date
-   *                           example: "2001-03-19"
-   *                         educationLevel:
-   *                           type: object
-   *                           properties:
-   *                             educationId:
-   *                               type: integer
-   *                               example: 1
-   *                             levelType:
-   *                               type: string
-   *                               example: "Fundamental"
-   *                     ClassId:
-   *                       type: integer
-   *                       example: 12
+   *                   $ref: '#/components/schemas/LessonRequest'
    *       '400':
-   *         description: Bad request, validation errors
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: object
-   *                   properties:
-   *                     errors:
-   *                       type: array
-   *                       items:
-   *                         type: object
-   *                         properties:
-   *                           type:
-   *                             type: string
-   *                             example: "field"
-   *                           value:
-   *                             type: array
-   *                             items:
-   *                               type: string
-   *                             example: ["wrong reason"]
-   *                           msg:
-   *                             type: string
-   *                             example: "Motivo da aula inválido. Deve conter ao menos um desses: reforço, prova ou trabalho, correção de exercício, outro."
-   *                           path:
-   *                             type: string
-   *                             example: "reason"
-   *                           location:
-   *                             type: string
-   *                             example: "body"
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '404':
-   *         description: Not found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Aluno não encontrado."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async create(req: Request, res: Response) {
     try {
@@ -206,53 +72,11 @@ export class LessonRequestController {
    *             schema:
    *               type: array
    *               items:
-   *                 type: object
-   *                 properties:
-   *                   classId:
-   *                     type: integer
-   *                     example: 1
-   *                   reason:
-   *                     type: array
-   *                     items:
-   *                       type: string
-   *                     example: ["reforço"]
-   *                   preferredDates:
-   *                     type: array
-   *                     items:
-   *                       type: string
-   *                     example: ["29/12/2025 às 23:45"]
-   *                   status:
-   *                     type: string
-   *                     example: "pendente"
-   *                   additionalInfo:
-   *                     type: string
-   *                     example: "Looking for a tutor with experience in calculus."
-   *                   subjectId:
-   *                     type: integer
-   *                     example: 1
-   *                   studentId:
-   *                     type: integer
-   *                     example: 1
+   *                 $ref: '#/components/schemas/LessonRequest'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async getAll(req: Request, res: Response) {
     try {
@@ -286,91 +110,17 @@ export class LessonRequestController {
    *         content:
    *           application/json:
    *             schema:
-   *               type: object
-   *               properties:
-   *                 ClassId:
-   *                   type: integer
-   *                   example: 1
-   *                 reason:
-   *                   type: array
-   *                   items:
-   *                     type: string
-   *                     example: ["reforço"]
-   *                 preferredDates:
-   *                   type: array
-   *                   items:
-   *                     type: string
-   *                     example: ["29/12/2025 às 23:45"]
-   *                 status:
-   *                   type: string
-   *                   example: "pendente"
-   *                 additionalInfo:
-   *                   type: string
-   *                   example: "Looking for a tutor with experience in calculus."
-   *                 subject:
-   *                   type: object
-   *                   properties:
-   *                     subjectId:
-   *                       type: integer
-   *                       example: 1
-   *                     subjectName:
-   *                       type: string
-   *                       example: "Biologia"
-   *                 student:
-   *                   type: object
-   *                   properties:
-   *                     id:
-   *                       type: integer
-   *                       example: 1
-   *                     username:
-   *                       type: string
-   *                       example: "teste123"
-   *                     fullName:
-   *                       type: string
-   *                       example: "Teste"
-   *                     birthDate:
-   *                       type: string
-   *                       format: date
-   *                       example: "2001-03-19"
-   *                 tutor:
-   *                   type: object
-   *                   nullable: true
-   *                   example: null
+   *               $ref: '#/components/schemas/LessonRequest'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '404':
-   *         description: Lesson request not found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Aula não encontrada."
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
   async getById(req: Request, res: Response) {
-    const { id } = req.params;
-
     try {
+      const { id } = req.params;
       const lesson = await LessonRequestService.getLessonRequestById(
         Number(id)
       );
@@ -387,7 +137,9 @@ export class LessonRequestController {
    * /api/delete/lessonrequest/{id}:
    *   delete:
    *     summary: Delete a lesson request by ID
-   *     tags: [lesson]
+   *     tags: [Lesson Request]
+   *     security:
+   *       - BearerAuth: []
    *     parameters:
    *       - name: id
    *         in: path
@@ -400,38 +152,13 @@ export class LessonRequestController {
    *       '204':
    *         description: Lesson request deleted successfully
    *       '400':
-   *         description: Invalid parameter
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Parâmetro inválido"
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '404':
-   *         description: Lesson request not found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Pedido de aula não existe"
+   *         $ref: '#/components/schemas/ErrorResponse'
    *       '500':
-   *         description: Server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno no servidor"
+   *         $ref: '#/components/schemas/ErrorResponse'
    */
-
-  async DeleteById(req: Request, res: Response) {
+  async deleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
     if (isNaN(classId) || classId <= 0) {
@@ -439,10 +166,8 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(
-        Number(classId)
-      );
-      return res.status(204).end().json({ deletedRequest });
+      await LessonRequestService.deleteLessonRequestById(classId);
+      return res.status(204).end();
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
