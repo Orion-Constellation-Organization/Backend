@@ -177,9 +177,7 @@ export class LessonRequestController {
    */
   async create(req: Request, res: Response) {
     try {
-      const lessonRequest = await LessonRequestService.createLessonRequest(
-        req.body
-      );
+      const lessonRequest = await LessonRequestService.createLessonRequest(req.body);
 
       return res.status(201).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CREATED,
@@ -196,7 +194,8 @@ export class LessonRequestController {
    * /api/lessonrequest:
    *   get:
    *     summary: Retrieve lesson requests (all or filtered)
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
    *     parameters:
@@ -252,31 +251,86 @@ export class LessonRequestController {
    *               items:
    *                 type: object
    *                 properties:
-   *                   classId:
+   *                   ClassId:
    *                     type: integer
    *                     example: 1
    *                   reason:
    *                     type: array
    *                     items:
    *                       type: string
-   *                     example: ["reforço"]
+   *                     example: ["prova ou trabalho"]
    *                   preferredDates:
    *                     type: array
    *                     items:
    *                       type: string
+   *                       format: date-time
    *                     example: ["2025-12-29T23:45:00Z"]
    *                   status:
    *                     type: string
-   *                     example: "pendente"
+   *                     example: "confirmado"
    *                   additionalInfo:
    *                     type: string
-   *                     example: "Looking for a tutor with experience in calculus."
-   *                   subjectId:
-   *                     type: integer
-   *                     example: 1
-   *                   studentId:
-   *                     type: integer
-   *                     example: 1
+   *                     example: "Testando1234testando"
+   *                   lessonRequestTutors:
+   *                     type: array
+   *                     items:
+   *                       type: object
+   *                       properties:
+   *                         id:
+   *                           type: integer
+   *                           example: 1
+   *                         chosenDate:
+   *                           type: string
+   *                           format: date-time
+   *                           example: "2025-06-07T22:45"
+   *                         status:
+   *                           type: string
+   *                           example: "confirmado"
+   *                         tutor:
+   *                           type: object
+   *                           nullable: true
+   *                           properties:
+   *                             id:
+   *                               type: integer
+   *                               example: 2
+   *                             username:
+   *                               type: string
+   *                               example: "tutorTeste02"
+   *                             expertise:
+   *                               type: string
+   *                               example: "Matemática"
+   *                             projectReason:
+   *                               type: string
+   *                               example: "I love studying"
+   *                             subjects:
+   *                               type: array
+   *                               items:
+   *                                 type: object
+   *                                 properties:
+   *                                   subjectId:
+   *                                     type: integer
+   *                                     example: 2
+   *                                   subjectName:
+   *                                     type: string
+   *                                     example: "Sociologia"
+   *                   subject:
+   *                     type: object
+   *                     properties:
+   *                       subjectId:
+   *                         type: integer
+   *                         example: 1
+   *                       subjectName:
+   *                         type: string
+   *                         example: "Biologia"
+   *                   student:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 1
+   *                       username:
+   *                         type: string
+   *                         example: "alunoTESTE11"
    *       '404':
    *         description: Tutor not found or no subjects associated with the tutor
    *         content:
@@ -317,21 +371,9 @@ export class LessonRequestController {
       const order: string = (req.query.order as string)?.toUpperCase() || 'ASC';
       const orderBy: string = (req.query.orderBy as string) || 'ClassId';
       const filtered: boolean = req.query.filtered === 'true';
-
       const lessonRequests = filtered
-        ? await LessonRequestService.getFilteredRequests(
-            Number(tutorId),
-            page,
-            size,
-            order,
-            orderBy
-          )
-        : await LessonRequestRepository.listLessonRequests(
-            page,
-            size,
-            order as 'ASC' | 'DESC',
-            orderBy
-          );
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
+        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
 
       return res.status(200).json(lessonRequests);
     } catch (error) {
@@ -345,7 +387,8 @@ export class LessonRequestController {
    * /api/lessonrequest/{id}:
    *   get:
    *     summary: Get lesson request by ID
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
    *     parameters:
@@ -371,18 +414,39 @@ export class LessonRequestController {
    *                   type: array
    *                   items:
    *                     type: string
-   *                     example: ["reforço"]
+   *                   example:
+   *                     - "prova ou trabalho"
    *                 preferredDates:
    *                   type: array
    *                   items:
    *                     type: string
-   *                     example: ["29/12/2025 às 23:45"]
+   *                   example:
+   *                     - "2025-06-07T22:45"
    *                 status:
    *                   type: string
-   *                   example: "pendente"
+   *                   example: "confirmado"
    *                 additionalInfo:
    *                   type: string
-   *                   example: "Looking for a tutor with experience in calculus."
+   *                   example: "Testando1234testando"
+   *                 lessonRequestTutors:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 1
+   *                       chosenDate:
+   *                         type: string
+   *                         format: date-time
+   *                         example: "2025-06-07T22:45"
+   *                       status:
+   *                         type: string
+   *                         example: "confirmado"
+   *                       tutor:
+   *                         type: object
+   *                         nullable: true
+   *                         example: null
    *                 subject:
    *                   type: object
    *                   properties:
@@ -400,18 +464,7 @@ export class LessonRequestController {
    *                       example: 1
    *                     username:
    *                       type: string
-   *                       example: "teste123"
-   *                     fullName:
-   *                       type: string
-   *                       example: "Teste"
-   *                     birthDate:
-   *                       type: string
-   *                       format: date
-   *                       example: "2001-03-19"
-   *                 tutor:
-   *                   type: object
-   *                   nullable: true
-   *                   example: null
+   *                       example: "alunoTESTE11"
    *       '401':
    *         description: Unauthorized, missing or invalid token
    *         content:
@@ -443,13 +496,12 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+
   async getById(req: Request, res: Response) {
     const { id } = req.params;
 
     try {
-      const lesson = await LessonRequestService.getLessonRequestById(
-        Number(id)
-      );
+      const lesson = await LessonRequestService.getLessonRequestById(Number(id));
 
       return res.status(200).json(lesson);
     } catch (error) {
@@ -457,13 +509,13 @@ export class LessonRequestController {
       return res.status(statusCode).json({ message });
     }
   }
-
   /**
    * @swagger
    * /api/lessonrequest/{id}:
    *   delete:
    *     summary: Delete a lesson request by ID
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     parameters:
    *       - name: id
    *         in: path
@@ -473,9 +525,9 @@ export class LessonRequestController {
    *           type: integer
    *           example: 1
    *     responses:
-   *       '204':
+   *       204:
    *         description: Lesson request deleted successfully
-   *       '400':
+   *       400:
    *         description: Invalid parameter
    *         content:
    *           application/json:
@@ -485,7 +537,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Parâmetro inválido"
-   *       '404':
+   *       404:
    *         description: Lesson request not found
    *         content:
    *           application/json:
@@ -495,7 +547,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Pedido de aula não existe"
-   *       '500':
+   *       500:
    *         description: Server error
    *         content:
    *           application/json:
@@ -506,7 +558,6 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno no servidor"
    */
-
   async DeleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
@@ -515,10 +566,210 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(
-        Number(classId)
-      );
+      const deletedRequest = await LessonRequestService.deleteLessonRequestById(Number(classId));
       return res.status(204).end().json({ deletedRequest });
+    } catch (error) {
+      const { statusCode, message } = handleError(error);
+      return res.status(statusCode).json({ message });
+    }
+  }
+  /**
+   * @swagger
+   * /api/lessonrequest/{id}:
+   *   patch:
+   *     summary: Update lesson request by ID
+   *     tags:
+   *       - Lesson Request
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - name: id
+   *         in: path
+   *         required: true
+   *         description: ID of the lesson request to update
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               subjectId:
+   *                 type: integer
+   *                 example: 1
+   *               reason:
+   *                 type: array
+   *                 items:
+   *                   type: string
+   *                   enum:
+   *                     - "reforço"
+   *                     - "prova ou trabalho"
+   *                     - "correção de exercício"
+   *                     - "outro"
+   *                 example: ["prova ou trabalho"]
+   *               additionalInfo:
+   *                 type: string
+   *                 example: "Testando1234testando"
+   *               preferredDates:
+   *                 type: array
+   *                 items:
+   *                   type: string
+   *                   format: date-time
+   *                 example: ["2025-06-07T22:45"]
+   *     responses:
+   *       200:
+   *         description: Lesson request updated successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula atualizada com sucesso!"
+   *       400:
+   *         description: Bad request, invalid data provided
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Motivo da aula inválido. Deve conter ao menos um desses: reforço, prova ou trabalho, correção de exercício, outro"
+   *       401:
+   *         description: Unauthorized, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token inválido."
+   *       404:
+   *         description: Lesson request or subject not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula não encontrada."
+   *       500:
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
+
+  async updateLesson(req: Request, res: Response) {
+    try {
+      const { lessonId } = req.params;
+      const { subjectId, reason, additionalInfo, preferredDates } = req.body;
+
+      await LessonRequestService.updateLessonRequest(Number(lessonId), subjectId, reason, additionalInfo, preferredDates);
+
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_UPDATED });
+    } catch (error) {
+      const { statusCode, message } = handleError(error);
+      return res.status(statusCode).json({ message });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/lessonrequest-cancel:
+   *   post:
+   *     summary: Cancel a tutor's lesson request relationship by classId and tutorId
+   *     tags:
+   *       - Lesson Request
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - name: classId
+   *         in: query
+   *         required: true
+   *         description: ID of the lesson request to cancel
+   *         schema:
+   *           type: integer
+   *           example: 21
+   *       - name: tutorId
+   *         in: query
+   *         required: true
+   *         description: ID of the tutor whose lesson request is to be cancelled
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *     responses:
+   *       '200':
+   *         description: Lesson request relationship canceled successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula cancelada com sucesso!"
+   *       '400':
+   *         description: Bad request, invalid data provided
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Parâmetro inválido"
+   *       '401':
+   *         description: Unauthorized, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token inválido."
+   *       '404':
+   *         description: Lesson request or tutor not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula não encontrada."
+   *       '500':
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
+
+  async cancelTutorLessonRequest(req: Request, res: Response) {
+    const { classId, tutorId } = req.query;
+
+    try {
+      await LessonRequestService.cancelTutorLessonRequestById(Number(classId), Number(tutorId));
+
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_CANCELED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });

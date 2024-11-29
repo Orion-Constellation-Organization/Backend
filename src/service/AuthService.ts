@@ -6,6 +6,7 @@ import { UserRepository } from '../repository/UserRepository';
 import { EnumUserType } from '../enum/EnumUserType';
 import { AppError } from '../error/AppError';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
+import { handleError } from '../utils/ErrorHandler';
 
 export class AuthService {
   static async login(email: string, password: string, role: string) {
@@ -14,10 +15,7 @@ export class AuthService {
         throw new AppError(EnumErrorMessages.INVALID_CREDENTIALS, 400);
       }
 
-      const user = await UserRepository.findUserByEmail(
-        email,
-        role as EnumUserType
-      );
+      const user = await UserRepository.findUserByEmail(email, role as EnumUserType);
       if (!user) {
         throw new AppError(EnumErrorMessages.INVALID_CREDENTIALS, 404);
       }
@@ -34,7 +32,8 @@ export class AuthService {
       const token = this.generateToken(user.id, user.email, role);
       return { userId: user.id, token, role: roleFound };
     } catch (error) {
-      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
+      const { statusCode, message } = handleError(error);
+      throw new AppError(message, statusCode);
     }
   }
 
