@@ -7,9 +7,10 @@ import { SubjectRepository } from '../repository/SubjectRepository';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 import { AppError } from '../error/AppError';
 import { handleError } from '../utils/ErrorHandler';
+import { RequestHandler } from 'express';
 
 export class LessonRequestValidator {
-  static createLessonRequest() {
+  static createLessonRequest(): Array<RequestHandler> {
     return BaseValidator.validationList([
       body('reason')
         .trim()
@@ -144,7 +145,7 @@ export class LessonRequestValidator {
         .withMessage(EnumErrorMessages.ADDITIONAL_INFO_LENGTH)
     ]);
   }
-  static getLessonRequests() {
+  static getLessonRequests(): Array<RequestHandler> {
     return BaseValidator.validationList([
       query('id').optional().isInt({ min: 1 }).withMessage(EnumErrorMessages.TUTOR_ID_INVALID),
       query('page').optional().isInt({ min: 1 }).withMessage(EnumErrorMessages.INVALID_PAGE),

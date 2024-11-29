@@ -64,7 +64,7 @@ export class LessonRequestService {
     }
   }
 
-  static async getLessonRequestById(id: number) {
+  static async getLessonRequestById(id: number): Promise<LessonRequest> {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(id);
     if (!lessonRequest) {
       throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
@@ -79,7 +79,7 @@ export class LessonRequestService {
     reason: EnumReasonName[],
     additionalInfo: string,
     preferredDates: string[]
-  ) {
+  ): Promise<LessonRequest> {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
