@@ -1,7 +1,6 @@
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { MysqlDataSource } from '../config/database';
 import { LessonRequest } from '../entity/LessonRequest';
-import { Tutor } from '../entity/Tutor';
 
 export class LessonRequestRepository {
   static async saveLessonRequest(lessonRequest: LessonRequest): Promise<LessonRequest> {
