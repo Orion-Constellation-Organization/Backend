@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { AuthService } from '../service/AuthService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
-import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 
 export class AuthController {
   /**
