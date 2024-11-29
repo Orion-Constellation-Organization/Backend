@@ -35,7 +35,7 @@ export enum EnumErrorMessages {
   CPF_INVALID = 'CPF inválido.',
   EXPERTISE_LENGTH_EXCEEDED = 'A expertise deve ter no máximo 50 caracteres.',
   PROJECT_REASON_LENGTH_EXCEEDED = 'O motivo do projeto deve ter no máximo 200 caracteres.',
-
+  TUTOR_SUBJECT_NOT_FOUNT = 'O Tutor não possui matérias cadastradas',
   // Student errors
   STUDENT_NOT_FOUND = 'Aluno não encontrado.',
   STUDENT_ID_REQUIRED = 'O Id do aluno é obrigatório.',
@@ -48,6 +48,7 @@ export enum EnumErrorMessages {
   SUBJECT_ID_INVALID = 'O Id da matéria deve ser um número.',
 
   // Lesson errors
+  ANY_LESSON_REQUEST_FOUND = 'Nenhuma aula encontrada para o seu perfil.',
   LESSON_REQUEST_NOT_FOUND = 'Aula não encontrada.',
   EXISTING_LESSON = 'Já existe uma aula agendada para o aluno nesse horário: ${date}',
   REASON_REQUIRED = 'Motivo da aula é obrigatório.',
@@ -60,7 +61,10 @@ export enum EnumErrorMessages {
   INVALID_ACEITO_STATUS = 'O status do pedido de aula deve estar como aceito.',
   TUTOR_ALREADY_ADDED = 'O tutor já está na lista de tutores do pedido de aula.',
   LESSON_REQUEST_ALREADY_CONFIRMED = 'A aula já foi confirmada, não é possível confirmar novamente.',
-
+  INVALID_PAGE = 'Página inválida.',
+  INVALID_SIZE = 'Tamanho inválido.',
+  ORDER_BY_INVALID = 'Ordenação inválida.',
+  ORDER_INVALID = 'Ordem inválida.',
   // Education level errors
   EDUCATION_LEVEL_NOT_FOUND = 'Nível de ensino não encontrado.',
   EDUCATION_LEVEL_REQUIRED = 'Níveis de ensino são obrigatórios.',

@@ -44,7 +44,14 @@ router.post('/api/login', AuthValidator.login(), new AuthController().login);
 
 // Lesson Request routes
 router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), new LessonRequestController().create);
-router.get('/api/lessonrequest', authMiddleware(), new LessonRequestController().getAll);
+
+router.get(
+  '/api/lessonrequest',
+  authMiddleware(),
+  LessonRequestValidator.getLessonRequests(),
+  new LessonRequestController().getLessonRequests
+);
+
 router.get('/api/lessonrequest/:id', authMiddleware(), new LessonRequestController().getById);
 router.delete('/api/lessonrequest/:id', authMiddleware(undefined, true), new LessonRequestController().DeleteById);
 router.patch('/api/lessonrequest/:lessonId', authMiddleware(undefined, true), new LessonRequestController().updateLesson);
