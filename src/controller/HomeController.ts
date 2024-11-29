@@ -1,7 +1,9 @@
 import { Request, Response } from 'express';
+import { HttpRoute } from '../decorators/HttpRoute';
 
 export class HomeController {
-  hello(_req: Request, res: Response) {
-    return res.status(200).send('Hello');
+  @HttpRoute({ path: '/', method: 'get' })
+  hello(req: Request, res: Response) {
+    res.send('Welcome to the API!');
   }
 }

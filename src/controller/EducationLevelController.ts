@@ -2,13 +2,11 @@ import { Request, Response } from 'express';
 import { EducationLevelService } from '../service/EducationLevelService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
-import { HttpRoute } from '../decorators/HttpRoute';
-import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class EducationLevelController {
   /**
    * @swagger
-   * /api/register/educationLevel:
+   * /api/educationLevel:
    *   post:
    *     summary: Create a new education level
    *     tags: [Education Level]
@@ -73,11 +71,6 @@ export class EducationLevelController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({
-    path: '/api/register/educationLevel',
-    method: 'post',
-    middlewares: [authMiddleware()]
-  })
   async create(req: Request, res: Response) {
     const { levelType } = req.body;
 
@@ -96,7 +89,7 @@ export class EducationLevelController {
 
   /**
    * @swagger
-   * /api/get/educationLevel:
+   * /api/educationLevel:
    *   get:
    *     summary: Get all education levels
    *     tags: [Education Level]
@@ -139,11 +132,6 @@ export class EducationLevelController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({
-    path: '/api/get/educationLevel',
-    method: 'get',
-    middlewares: [authMiddleware()]
-  })
   async getAll(req: Request, res: Response) {
     try {
       const educationLevels =
