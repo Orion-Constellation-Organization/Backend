@@ -173,15 +173,7 @@ export class LessonRequestService {
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
     }
-
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(
-      tutor.subjects,
-      tutor.educationLevels,
-      page,
-      size,
-      order as 'ASC' | 'DESC',
-      orderBy
-    );
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, page, size, order as 'ASC' | 'DESC', orderBy);
     return lessonRequests;
   }
 }

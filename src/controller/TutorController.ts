@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { TutorService } from '../service/TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 
 export class TutorController {
   /**
@@ -473,6 +474,9 @@ export class TutorController {
     try {
       const { id } = req.body;
       const tutor = await TutorService.getTutorById(id);
+      if (!req.file) {
+        return res.status(400).json({ message: EnumErrorMessages.PHOTO_REQUIRED });
+      }
       await TutorService.updateTutorPhoto(tutor, req.file);
 
       return res.status(200).json({

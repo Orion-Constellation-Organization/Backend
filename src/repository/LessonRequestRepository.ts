@@ -1,13 +1,9 @@
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { MysqlDataSource } from '../config/database';
 import { LessonRequest } from '../entity/LessonRequest';
-import { Subject } from '../entity/Subject';
-import { EducationLevel } from '../entity/EducationLevel';
-import { In } from 'typeorm';
+import { Tutor } from '../entity/Tutor';
 
 export class LessonRequestRepository {
-  private static relations = ['subject', 'student', 'tutor'];
-
   static async saveLessonRequest(lessonRequest: LessonRequest): Promise<LessonRequest> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
     return repository.save(lessonRequest);
@@ -65,23 +61,27 @@ export class LessonRequestRepository {
     orderBy: string
   ): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
+    const tutor = await MysqlDataSource.getRepository(Tutor).findOne({
+      where: {
+        id: tutorId
+      },
+      relations: ['educationLevels', 'subjects']
+    });
     const skip = (page - 1) * size;
-
     return repository
       .createQueryBuilder('lessonRequest')
       .leftJoinAndSelect('lessonRequest.lessonRequestTutors', 'lessonRequestTutor')
       .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
-      .innerJoinAndSelect('lessonRequest.subject', 'subject')
-      .innerJoinAndSelect('lessonRequest.student', 'student')
-      .innerJoinAndSelect('student.educationLevel', 'studentEducationLevel')
-      .innerJoin(
-        'tutor_education_levels',
-        'tutorEducationLevels',
-        'tutorEducationLevels.educationLevelId = studentEducationLevel.educationId'
-      )
-      .where('lessonRequest.status = :status', { status: 'pendente' })
-      .andWhere('tutorEducationLevels.tutorId = :tutorId', { tutorId })
-      .andWhere('subject.subjectId IN (SELECT ts.subjectId FROM tutor_subjects ts WHERE ts.tutorId = :tutorId)', { tutorId })
+      .leftJoinAndSelect('lessonRequest.subject', 'subject')
+      .leftJoinAndSelect('lessonRequest.student', 'student')
+      .leftJoinAndSelect('student.educationLevel', 'educationLevel')
+      .where('lessonRequest.status = :pendente', { pendente: EnumStatusName.PENDENTE })
+      .andWhere('educationLevel.educationId IN (:...tutorEducationLevels)', {
+        tutorEducationLevels: tutor.educationLevels.map((level) => level.educationId)
+      })
+      .andWhere('subject.subjectId IN (:...tutorSubjects)', {
+        tutorSubjects: tutor.subjects.map((subject) => subject.subjectId)
+      })
       .orderBy(`lessonRequest.${orderBy}`, order)
       .skip(skip)
       .take(size)
