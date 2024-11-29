@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { TutorService } from '../service/TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 
 export class TutorController {
   /**
@@ -356,62 +357,9 @@ export class TutorController {
    *             schema:
    *               type: object
    *               properties:
-   *                 id:
-   *                   type: integer
-   *                   example: 1
-   *                 username:
+   *                 message:
    *                   type: string
-   *                   example: "nometutor"
-   *                 fullName:
-   *                   type: string
-   *                   example: "Nome Tutor"
-   *                 photoUrl:
-   *                   type: string
-   *                   example: "https://example.com/photo.jpg"
-   *                 birthDate:
-   *                   type: string
-   *                   example: "01/01/1990"
-   *                 expertise:
-   *                   type: string
-   *                   example: "Matemática"
-   *                 projectReason:
-   *                   type: string
-   *                   example: "Ajudar os alunos"
-   *                 educationLevels:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       educationId:
-   *                         type: integer
-   *                         example: 1
-   *                       levelType:
-   *                         type: string
-   *                         example: "Fundamental"
-   *                 lessonRequests:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       ClassId:
-   *                         type: integer
-   *                         example: 14
-   *                       reason:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           example: "reforço"
-   *                       preferredDates:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           example: "29/12/2025 às 23:45"
-   *                       status:
-   *                         type: string
-   *                         example: "pendente"
-   *                       additionalInfo:
-   *                         type: string
-   *                         example: "Looking for a tutor with experience in calculus."
+   *                   example: Tutor atualizado com sucesso!
    *       '401':
    *         description: Unauthorized, missing or invalid token
    *         content:
@@ -526,6 +474,9 @@ export class TutorController {
     try {
       const { id } = req.body;
       const tutor = await TutorService.getTutorById(id);
+      if (!req.file) {
+        return res.status(400).json({ message: EnumErrorMessages.PHOTO_REQUIRED });
+      }
       await TutorService.updateTutorPhoto(tutor, req.file);
 
       return res.status(200).json({
@@ -678,7 +629,7 @@ export class TutorController {
    * /api/lesson-request/accept:
    *   patch:
    *     summary: Accept a lesson request
-   *     tags: [Lesson Requests]
+   *     tags: [Lesson Request]
    *     security:
    *       - BearerAuth: []
    *     requestBody:

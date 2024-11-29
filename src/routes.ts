@@ -54,7 +54,12 @@ router.post('/api/login', AuthValidator.login(), new AuthController().login);
 // Lesson Request route
 router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), new LessonRequestController().create);
 
-router.get('/api/lessonrequest', authMiddleware(), new LessonRequestController().getAll);
+router.get(
+  '/api/lessonrequest',
+  authMiddleware(),
+  LessonRequestValidator.getLessonRequests(),
+  new LessonRequestController().getLessonRequests
+);
 
 router.get('/api/lessonrequest/:id', authMiddleware(), new LessonRequestController().getById);
 

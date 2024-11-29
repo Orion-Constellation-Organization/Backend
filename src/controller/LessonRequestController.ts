@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 
 export class LessonRequestController {
   /**
@@ -192,13 +193,57 @@ export class LessonRequestController {
    * @swagger
    * /api/lessonrequest:
    *   get:
-   *     summary: Retrieve all lesson requests
-   *     tags: [Lesson Request]
+   *     summary: Retrieve lesson requests (all or filtered)
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
+   *     parameters:
+   *       - name: filtered
+   *         in: query
+   *         required: false
+   *         description: Whether to filter the lesson requests (true or false)
+   *         schema:
+   *           type: boolean
+   *           example: true
+   *       - name: id
+   *         in: query
+   *         required: false
+   *         description: ID of the tutor (required if filtered is true)
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: false
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: ClassId
    *     responses:
    *       '200':
-   *         description: List of lesson requests retrieved successfully
+   *         description: Lesson requests retrieved successfully
    *         content:
    *           application/json:
    *             schema:
@@ -219,7 +264,7 @@ export class LessonRequestController {
    *                     items:
    *                       type: string
    *                       format: date-time
-   *                     example: ["2025-06-07T22:45"]
+   *                     example: ["2025-12-29T23:45:00Z"]
    *                   status:
    *                     type: string
    *                     example: "confirmado"
@@ -286,6 +331,16 @@ export class LessonRequestController {
    *                       username:
    *                         type: string
    *                         example: "alunoTESTE11"
+   *       '404':
+   *         description: Tutor not found or no subjects associated with the tutor
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O Tutor não possui matérias cadastradas."
    *       '401':
    *         description: Unauthorized, missing or invalid token
    *         content:
@@ -307,9 +362,19 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  async getAll(req: Request, res: Response) {
+
+  async getLessonRequests(req: Request, res: Response) {
     try {
-      const lessonRequests = await LessonRequestService.getAllLessonRequests();
+      const tutorId = req.query.id ? Number(req.query.id) : null;
+      const page = Number(req.query.page) || 1;
+      const size = Number(req.query.size) || 10;
+      const order: string = (req.query.order as string)?.toUpperCase() || 'ASC';
+      const orderBy: string = (req.query.orderBy as string) || 'ClassId';
+      const filtered: boolean = req.query.filtered === 'true';
+      const lessonRequests = filtered
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
+        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
+
       return res.status(200).json(lessonRequests);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -322,7 +387,8 @@ export class LessonRequestController {
    * /api/lessonrequest/{id}:
    *   get:
    *     summary: Get lesson request by ID
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
    *     parameters:
@@ -430,6 +496,7 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+
   async getById(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -442,13 +509,13 @@ export class LessonRequestController {
       return res.status(statusCode).json({ message });
     }
   }
-
   /**
    * @swagger
    * /api/lessonrequest/{id}:
    *   delete:
    *     summary: Delete a lesson request by ID
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     parameters:
    *       - name: id
    *         in: path
@@ -458,9 +525,9 @@ export class LessonRequestController {
    *           type: integer
    *           example: 1
    *     responses:
-   *       '204':
+   *       204:
    *         description: Lesson request deleted successfully
-   *       '400':
+   *       400:
    *         description: Invalid parameter
    *         content:
    *           application/json:
@@ -470,7 +537,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Parâmetro inválido"
-   *       '404':
+   *       404:
    *         description: Lesson request not found
    *         content:
    *           application/json:
@@ -480,7 +547,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Pedido de aula não existe"
-   *       '500':
+   *       500:
    *         description: Server error
    *         content:
    *           application/json:
@@ -491,7 +558,6 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno no servidor"
    */
-
   async DeleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
@@ -507,13 +573,13 @@ export class LessonRequestController {
       return res.status(statusCode).json({ message });
     }
   }
-
   /**
    * @swagger
    * /api/lessonrequest/{id}:
    *   patch:
    *     summary: Update lesson request by ID
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
    *     parameters:
@@ -554,7 +620,7 @@ export class LessonRequestController {
    *                   format: date-time
    *                 example: ["2025-06-07T22:45"]
    *     responses:
-   *       '200':
+   *       200:
    *         description: Lesson request updated successfully
    *         content:
    *           application/json:
@@ -564,7 +630,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Aula atualizada com sucesso!"
-   *       '400':
+   *       400:
    *         description: Bad request, invalid data provided
    *         content:
    *           application/json:
@@ -574,7 +640,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Motivo da aula inválido. Deve conter ao menos um desses: reforço, prova ou trabalho, correção de exercício, outro"
-   *       '401':
+   *       401:
    *         description: Unauthorized, missing or invalid token
    *         content:
    *           application/json:
@@ -584,7 +650,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Token inválido."
-   *       '404':
+   *       404:
    *         description: Lesson request or subject not found
    *         content:
    *           application/json:
@@ -594,7 +660,7 @@ export class LessonRequestController {
    *                 message:
    *                   type: string
    *                   example: "Aula não encontrada."
-   *       '500':
+   *       500:
    *         description: Internal server error
    *         content:
    *           application/json:
@@ -605,6 +671,7 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+
   async updateLesson(req: Request, res: Response) {
     try {
       const { lessonId } = req.params;
@@ -624,7 +691,8 @@ export class LessonRequestController {
    * /api/lessonrequest-cancel:
    *   post:
    *     summary: Cancel a tutor's lesson request relationship by classId and tutorId
-   *     tags: [Lesson Request]
+   *     tags:
+   *       - Lesson Request
    *     security:
    *       - BearerAuth: []
    *     parameters:
@@ -694,6 +762,7 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+
   async cancelTutorLessonRequest(req: Request, res: Response) {
     const { classId, tutorId } = req.query;
 
