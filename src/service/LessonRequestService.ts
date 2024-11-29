@@ -64,13 +64,7 @@ export class LessonRequestService {
     }
   }
 
-  static async getAllLessonRequests() {
-    const lessonRequests = await LessonRequestRepository.getAllLessonRequests();
-
-    return lessonRequests;
-  }
-
-  static async getLessonRequestById(id: number) {
+  static async getLessonRequestById(id: number): Promise<LessonRequest> {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(id);
     if (!lessonRequest) {
       throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
@@ -85,7 +79,7 @@ export class LessonRequestService {
     reason: EnumReasonName[],
     additionalInfo: string,
     preferredDates: string[]
-  ) {
+  ): Promise<LessonRequest> {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
@@ -172,5 +166,14 @@ export class LessonRequestService {
     const updatedLessonRequest = await LessonRequestRepository.saveLessonRequest(lessonRequest);
 
     return updatedLessonRequest;
+  }
+
+  static async getFilteredRequests(tutorId: number, page: number, size: number, order: string, orderBy: string): Promise<LessonRequest[]> {
+    const tutor = await TutorService.getTutorById(Number(tutorId));
+    if (!tutor.subjects || tutor.subjects.length === 0) {
+      throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
+    }
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, page, size, order as 'ASC' | 'DESC', orderBy);
+    return lessonRequests;
   }
 }

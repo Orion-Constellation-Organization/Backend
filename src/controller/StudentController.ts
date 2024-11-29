@@ -539,7 +539,7 @@ export class StudentController {
    * /api/confirm-lesson-request:
    *   post:
    *     summary: Confirms a lesson request for a specific tutor
-   *     tags: [Lesson Requests]
+   *     tags: [Lesson Request]
    *     security:
    *       - BearerAuth: []
    *     requestBody:
