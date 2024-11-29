@@ -60,13 +60,7 @@ export class LessonRequestRepository {
     order: 'ASC' | 'DESC',
     orderBy: string
   ): Promise<LessonRequest[]> {
-    const repository = MysqlDataSource.getRepository(LessonRequest);
-    const tutor = await MysqlDataSource.getRepository(Tutor).findOne({
-      where: {
-        id: tutorId
-      },
-      relations: ['educationLevels', 'subjects']
-    });
+    const repository = await MysqlDataSource.getRepository(LessonRequest);
     const skip = (page - 1) * size;
     return repository
       .createQueryBuilder('lessonRequest')
@@ -76,12 +70,9 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('student.educationLevel', 'educationLevel')
       .where('lessonRequest.status = :pendente', { pendente: EnumStatusName.PENDENTE })
-      .andWhere('educationLevel.educationId IN (:...tutorEducationLevels)', {
-        tutorEducationLevels: tutor.educationLevels.map((level) => level.educationId)
-      })
-      .andWhere('subject.subjectId IN (:...tutorSubjects)', {
-        tutorSubjects: tutor.subjects.map((subject) => subject.subjectId)
-      })
+      .andWhere('lessonRequestTutor.tutorId = :tutorId', { tutorId })
+      .andWhere('educationLevel.educationId IN (SELECT educationLevelId FROM tutor_education_levels WHERE tutorId = :tutorId)', { tutorId })
+      .andWhere('subject.subjectId IN (SELECT subjectId FROM tutor_subjects_subject WHERE tutorId = :tutorId)', { tutorId })
       .orderBy(`lessonRequest.${orderBy}`, order)
       .skip(skip)
       .take(size)
