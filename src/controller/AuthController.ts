@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthService } from '../service/AuthService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { HttpRoute } from '../decorators/HttpRoute';
 
 export class AuthController {
   /**
@@ -91,7 +92,11 @@ export class AuthController {
    *                 error:
    *                   type: string
    */
-  public login = async (req: Request, res: Response): Promise<Response> => {
+  @HttpRoute({
+    path: '/api/login',
+    method: 'post'
+  })
+  public async login(req: Request, res: Response): Promise<Response> {
     const { email, password, role } = req.body;
 
     try {
@@ -111,5 +116,5 @@ export class AuthController {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
     }
-  };
+  }
 }

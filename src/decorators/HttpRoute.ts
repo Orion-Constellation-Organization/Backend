@@ -36,6 +36,26 @@ export function HttpRoute({ path, method, middlewares = [] }: RouteOptions) {
 }
 
 /**
+ * Decorator for simple HTTP routes without middleware.
+ */
+export function NoAuthRoute({
+  path,
+  method
+}: Omit<RouteOptions, 'middlewares'>) {
+  return function (
+    target: unknown,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+
+    router[method](path, (req: Request, res: Response, next: NextFunction) => {
+      originalMethod.call(target, req, res, next);
+    });
+  };
+}
+
+/**
  * Função para obter o router configurado.
  * @returns {Router} O router configurado com as rotas.
  */

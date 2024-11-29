@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { StudentService } from '../service/StudentService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { HttpRoute, NoAuthRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class StudentController {
   /**
@@ -130,6 +132,7 @@ export class StudentController {
    *                 error:
    *                   type: string
    */
+  @NoAuthRoute({ path: '/api/register/student', method: 'post' })
   async create(req: Request, res: Response) {
     try {
       const { user: savedStudent, token } = await StudentService.createStudent(
@@ -231,6 +234,11 @@ export class StudentController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/get/student',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const students = await StudentService.getAllStudents();
@@ -331,6 +339,11 @@ export class StudentController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/get/student/:id',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -352,6 +365,11 @@ export class StudentController {
     }
   }
 
+  @HttpRoute({
+    path: '/api/get/student-pending/:id',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getPendingLessonByStudentId(req: Request, res: Response) {
     try {
       const { id } = req.params;

@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class LessonRequestController {
   /**
@@ -174,6 +176,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/register/lessonrequest',
+    method: 'post',
+    middlewares: [authMiddleware()]
+  })
   async create(req: Request, res: Response) {
     try {
       const lessonRequest = await LessonRequestService.createLessonRequest(
@@ -254,6 +261,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/get/lessonrequest',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const lessonRequests = await LessonRequestService.getAllLessonRequests();
@@ -367,6 +379,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/get/lessonrequest/:id',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getById(req: Request, res: Response) {
     const { id } = req.params;
 
@@ -374,7 +391,6 @@ export class LessonRequestController {
       const lesson = await LessonRequestService.getLessonRequestById(
         Number(id)
       );
-
       return res.status(200).json(lesson);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -431,6 +447,11 @@ export class LessonRequestController {
    *                   example: "Erro interno no servidor"
    */
 
+  @HttpRoute({
+    path: '/api/delete/lessonrequest/:id',
+    method: 'delete',
+    middlewares: [authMiddleware()]
+  })
   async DeleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
@@ -439,10 +460,8 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(
-        Number(classId)
-      );
-      return res.status(204).end().json({ deletedRequest });
+      await LessonRequestService.deleteLessonRequestById(classId);
+      return res.status(204).end();
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });

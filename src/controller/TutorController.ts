@@ -3,6 +3,7 @@ import { TutorService } from '../service/TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class TutorController {
   /**
@@ -307,7 +308,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({ path: '/api/get/tutor', method: 'get' })
+  @HttpRoute({
+    path: '/api/get/tutor',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const tutors = await TutorService.getAllTutors();
@@ -448,7 +453,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({ path: '/api/update/tutor', method: 'patch' })
+  @HttpRoute({
+    path: '/api/update/tutor',
+    method: 'patch',
+    middlewares: [authMiddleware()]
+  })
   async updatePersonalData(req: Request, res: Response) {
     try {
       const { id, expertise, projectReason, subject: subjectIds } = req.body;
@@ -535,7 +544,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({ path: '/api/update/tutor/photo', method: 'patch' })
+  @HttpRoute({
+    path: '/api/update/tutor/photo',
+    method: 'patch',
+    middlewares: [authMiddleware()]
+  })
   async updatePhoto(req: Request, res: Response) {
     try {
       const { id } = req.body;
@@ -676,7 +689,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-  @HttpRoute({ path: '/api/get/tutor/:id', method: 'get' })
+  @HttpRoute({
+    path: '/api/get/tutor/:id',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
