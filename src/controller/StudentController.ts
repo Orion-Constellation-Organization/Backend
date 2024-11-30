@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { StudentService } from '../service/StudentService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { EnumStatusName } from '../enum/EnumStatusName';
 
 export class StudentController {
   /**
@@ -121,7 +122,7 @@ export class StudentController {
   async getStudentLessons(req: Request, res: Response) {
     try {
       const { id, status } = req.query;
-      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as string);
+      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName);
       return res.status(200).json(lessons);
     } catch (error) {
       const { statusCode, message } = handleError(error);
