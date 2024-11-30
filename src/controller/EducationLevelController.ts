@@ -6,7 +6,7 @@ import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 export class EducationLevelController {
   /**
    * @swagger
-   * /api/educationLevel:
+   * /api/educationlevel:
    *   post:
    *     summary: Create a new education level
    *     tags: [Education Level]
@@ -20,9 +20,7 @@ export class EducationLevelController {
    *             type: object
    *             properties:
    *               levelType:
-   *                 type: string
-   *                 enum: [fundamental, medio, pre-vestibular]
-   *                 description: Type of education level
+   *                 $ref: '#/components/schemas/EducationLevel/properties/levelType'
    *     responses:
    *       '201':
    *         description: Education level created successfully
@@ -31,45 +29,17 @@ export class EducationLevelController {
    *             schema:
    *               type: object
    *               properties:
-   *                 educationId:
-   *                   type: integer
-   *                   example: 1
-   *                 levelType:
-   *                   type: string
-   *                   example: "Fundamental"
+   *                 educationLevel:
+   *                   $ref: '#/components/schemas/EducationLevel'
    *                 message:
    *                   type: string
    *                   example: "Nível de ensino criado com sucesso!"
    *       '400':
-   *         description: Level type is required
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Nível de ensino é obrigatório."
+   *         $ref: '#/components/responses/BadRequest'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/responses/Unauthorized'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/responses/InternalServerError'
    */
   async create(req: Request, res: Response) {
     const { levelType } = req.body;
@@ -88,7 +58,7 @@ export class EducationLevelController {
 
   /**
    * @swagger
-   * /api/educationLevel:
+   * /api/educationlevel:
    *   get:
    *     summary: Get all education levels
    *     tags: [Education Level]
@@ -100,36 +70,11 @@ export class EducationLevelController {
    *         content:
    *           application/json:
    *             schema:
-   *               type: array
-   *               items:
-   *                 type: object
-   *                 properties:
-   *                   educationId:
-   *                     type: integer
-   *                     example: 1
-   *                   levelType:
-   *                     type: string
-   *                     example: "Fundamental"
+   *               $ref: '#/components/schemas/EducationLevelList'
    *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
+   *         $ref: '#/components/responses/Unauthorized'
    *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
+   *         $ref: '#/components/responses/InternalServerError'
    */
   async getAll(req: Request, res: Response) {
     try {
