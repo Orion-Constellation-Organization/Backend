@@ -566,8 +566,8 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(Number(classId));
-      return res.status(204).end().json({ deletedRequest });
+      await LessonRequestService.deleteLessonRequestById(Number(classId));
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DELETED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
