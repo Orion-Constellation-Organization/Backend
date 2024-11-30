@@ -116,18 +116,13 @@ export class LessonRequestService {
     }
   }
 
-  static async deleteLessonRequestById(classId: number) {
-    try {
-      const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
+  static async deleteLessonRequestById(classId: number): Promise<void> {
+    const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
 
-      if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
-      }
-
-      await LessonRequestRepository.deleteByClassId(classId);
-    } catch (error) {
-      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
+    if (!lessonRequest) {
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
     }
+    await LessonRequestRepository.deleteByClassId(classId);
   }
 
   static async cancelTutorLessonRequestById(classId: number, tutorId: number) {
