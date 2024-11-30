@@ -9,8 +9,7 @@ export class User {
     type: 'varchar',
     length: 255,
     unique: true,
-    nullable: false,
-    select: false
+    nullable: false
   })
   username: string;
 
@@ -32,6 +31,6 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false, select: false })
   fullName: string;
 
-  @Column({ type: 'date', nullable: false, select: false })
+  @Column({ type: 'date', nullable: false })
   birthDate: Date;
 }
