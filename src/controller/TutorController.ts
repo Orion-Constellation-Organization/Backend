@@ -626,7 +626,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/lesson-request/accept:
+   * /api/tutor-accept-lesson:
    *   patch:
    *     summary: Accept a lesson request
    *     tags: [Lesson Request]
