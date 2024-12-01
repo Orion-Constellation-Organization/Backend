@@ -69,7 +69,6 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('student.educationLevel', 'educationLevel')
       .where('lessonRequest.status = :pendente', { pendente: EnumStatusName.PENDENTE })
-      .andWhere('lessonRequestTutor.tutorId = :tutorId', { tutorId })
       .andWhere('educationLevel.educationId IN (SELECT educationLevelId FROM tutor_education_levels WHERE tutorId = :tutorId)', { tutorId })
       .andWhere('subject.subjectId IN (SELECT subjectId FROM tutor_subjects_subject WHERE tutorId = :tutorId)', { tutorId })
       .orderBy(`lessonRequest.${orderBy}`, order)
