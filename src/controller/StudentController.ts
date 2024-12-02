@@ -3,6 +3,7 @@ import { StudentService } from '../service/StudentService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
+import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 
 export class StudentController {
   /**
@@ -154,6 +155,35 @@ export class StudentController {
    *     tags: [Student]
    *     security:
    *       - BearerAuth: []
+   *     parameters:
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: true
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: id
    *     responses:
    *       '200':
    *         description: Successfully retrieved the list of students
@@ -226,7 +256,8 @@ export class StudentController {
    */
   async getAll(req: Request, res: Response) {
     try {
-      const students = await StudentService.getAllStudents();
+      const params = sanitizePaginationParams(req.query);
+      const students = await StudentService.getAllStudents(params);
       return res.status(200).json(students);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -434,6 +465,34 @@ export class StudentController {
    *             - cancelado
    *         description: Status name
    *         example: aceito
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: true
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: id
    *     responses:
    *       '200':
    *         description: List of pending lessons for the student
@@ -526,7 +585,8 @@ export class StudentController {
   async getStudentLessons(req: Request, res: Response) {
     try {
       const { id, status } = req.query;
-      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName);
+      const params = sanitizePaginationParams(req.query);
+      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName, params);
       return res.status(200).json(lessons);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -536,10 +596,10 @@ export class StudentController {
 
   /**
    * @swagger
-   * /api/confirm-lesson-request:
-   *   post:
+   * /api/student-confirm-lesson:
+   *   patch:
    *     summary: Confirms a lesson request for a specific tutor
-   *     tags: [Lesson Request]
+   *     tags: [Student Lessons]
    *     security:
    *       - BearerAuth: []
    *     requestBody:
