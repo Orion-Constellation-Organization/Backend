@@ -33,7 +33,7 @@ export class LessonRequestController {
    *                 items:
    *                   type: string
    *                 description: Preferred dates for the lesson
-   *                 example: ["22/12/2024 às 10:00"]
+   *                 example: ["2024-12-22T10:00"]
    *               subjectId:
    *                 type: integer
    *                 description: ID of the subject
@@ -61,6 +61,9 @@ export class LessonRequestController {
    *                 lessonRequest:
    *                   type: object
    *                   properties:
+   *                     ClassId:
+   *                       type: integer
+   *                       example: 13
    *                     reason:
    *                       type: array
    *                       items:
@@ -70,13 +73,13 @@ export class LessonRequestController {
    *                       type: array
    *                       items:
    *                         type: string
-   *                       example: ["2025-12-25 23:45"]
-   *                     additionalInfo:
-   *                       type: string
-   *                       example: "Looking for a tutor with experience in calculus."
+   *                       example: ["2025-12-25T23:45"]
    *                     status:
    *                       type: string
    *                       example: "pendente"
+   *                     additionalInfo:
+   *                       type: string
+   *                       example: "Looking for a tutor with experience in calculus."
    *                     subject:
    *                       type: object
    *                       properties:
@@ -111,9 +114,6 @@ export class LessonRequestController {
    *                             levelType:
    *                               type: string
    *                               example: "Fundamental"
-   *                     ClassId:
-   *                       type: integer
-   *                       example: 12
    *       '400':
    *         description: Bad request, validation errors
    *         content:
@@ -279,7 +279,7 @@ export class LessonRequestController {
    *                     items:
    *                       type: string
    *                       format: date-time
-   *                     example: ["2025-12-29T23:45:00Z"]
+   *                     example: ["2025-12-29T23:45"]
    *                   status:
    *                     type: string
    *                     example: "confirmado"
