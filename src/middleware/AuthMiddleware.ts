@@ -20,17 +20,12 @@ export const authMiddleware = (requiredRole?: string, validateUser?: boolean) =>
       const decoded = AuthService.verifyToken(token) as DecodedToken;
 
       (req as unknown as { decoded: DecodedToken }).decoded = decoded;
-      if (validateUser) {
-        const userId = Number(req.params.id || req.body.id || req.query.id);
-
-        if (!userId || userId !== decoded.id) {
-          return res.status(403).json({ message: EnumErrorMessages.INSUFFICIENT_PERMISSION });
-        }
-      }
-      if (requiredRole && decoded.role !== requiredRole) {
+      if (
+        (validateUser && (Number(req.body.id) || Number(req.query.id) || Number(req.params.id)) !== decoded.id) ||
+        (requiredRole && decoded.role !== requiredRole)
+      ) {
         return res.status(403).json({ message: EnumErrorMessages.INSUFFICIENT_PERMISSION });
       }
-
       next();
     } catch (err) {
       return res.status(401).json({ message: EnumErrorMessages.INVALID_TOKEN });

@@ -43,25 +43,10 @@ router.get('/', homeController.hello);
  */
 router.post('/api/tutor', TutorValidator.createTutor(), tutorController.create);
 router.get('/api/tutor', authMiddleware(), tutorController.getAll);
-router.get('/api/tutor/:id', authMiddleware(), tutorController.getById);
-router.patch(
-  '/api/tutor',
-  authMiddleware(),
-  UpdatePersonalDataValidator,
-  tutorController.updatePersonalData
-);
-router.patch(
-  '/api/photo',
-  authMiddleware(),
-  upload.single('image'),
-  UploadPhotoValidator,
-  tutorController.updatePhoto
-);
-router.patch(
-  '/api/tutor-accept-lesson',
-  authMiddleware(),
-  tutorController.acceptLessonRequest
-);
+router.get('/api/tutor/:id', authMiddleware('tutor', true), tutorController.getById);
+router.patch('/api/tutor', authMiddleware('tutor', true), UpdatePersonalDataValidator, tutorController.updatePersonalData);
+router.patch('/api/photo', authMiddleware(), upload.single('image'), UploadPhotoValidator, tutorController.updatePhoto);
+router.patch('/api/tutor-accept-lesson', authMiddleware(), tutorController.acceptLessonRequest);
 
 /**
  * Student routes
@@ -72,33 +57,17 @@ router.patch(
  * @route PATCH /api/student-confirm-lesson
  */
 router.get('/api/student', authMiddleware(), studentController.getAll);
-router.post(
-  '/api/student',
-  StudentValidator.createStudent(),
-  studentController.create
-);
-router.get('/api/student/:id', authMiddleware(), studentController.getById);
-router.get(
-  '/api/student-lesson-status',
-  authMiddleware(),
-  studentController.getStudentLessons
-);
-router.patch(
-  '/api/student-confirm-lesson',
-  authMiddleware(),
-  studentController.confirmLessonRequest
-);
+router.post('/api/student', StudentValidator.createStudent(), studentController.create);
+router.get('/api/student/:id', authMiddleware('student', true), studentController.getById);
+router.get('/api/student-lesson-status', authMiddleware('student', true), studentController.getStudentLessons);
+router.patch('/api/student-confirm-lesson', authMiddleware(), studentController.confirmLessonRequest);
 
 /**
  * Education Level routes
  * @route POST /api/educationlevel
  * @route GET /api/educationlevel
  */
-router.post(
-  '/api/educationlevel',
-  authMiddleware(),
-  educationLevelController.create
-);
+router.post('/api/educationlevel', authMiddleware(), educationLevelController.create);
 router.get('/api/educationlevel', educationLevelController.getAll);
 
 /**
@@ -116,37 +85,12 @@ router.post('/api/login', AuthValidator.login(), authController.login);
  * @route PATCH /api/lessonrequest/:lessonId
  * @route DELETE /api/lessonrequest-cancel
  */
-router.post(
-  '/api/lessonrequest',
-  authMiddleware(),
-  LessonRequestValidator.createLessonRequest(),
-  lessonRequestController.create
-);
-router.get(
-  '/api/lessonrequest',
-  authMiddleware(),
-  LessonRequestValidator.getLessonRequests(),
-  lessonRequestController.getLessonRequests
-);
-router.get(
-  '/api/lessonrequest/:id',
-  authMiddleware(),
-  lessonRequestController.getById
-);
-router.delete(
-  '/api/lessonrequest/:id',
-  lessonRequestController.deleteById
-);
-router.patch(
-  '/api/lessonrequest/:lessonId',
-  authMiddleware(),
-  lessonRequestController.updateLesson
-);
-router.delete(
-  '/api/lessonrequest-cancel',
-  authMiddleware(),
-  lessonRequestController.cancelTutorLessonRequest
-);
+router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), lessonRequestController.create);
+router.get('/api/lessonrequest', authMiddleware(), LessonRequestValidator.getLessonRequests(), lessonRequestController.getLessonRequests);
+router.get('/api/lessonrequest/:id', authMiddleware(), lessonRequestController.getById);
+router.delete('/api/lessonrequest/:id', authMiddleware('student', true), lessonRequestController.deleteById);
+router.patch('/api/lessonrequest/:lessonId', authMiddleware('student', true), lessonRequestController.updateLesson);
+router.delete('/api/lessonrequest-cancel', authMiddleware('tutor', true), lessonRequestController.cancelTutorLessonRequest);
 
 /**
  * Subject routes
