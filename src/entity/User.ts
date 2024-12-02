@@ -31,6 +31,6 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false, select: false })
   fullName: string;
 
-  @Column({ type: 'date', nullable: false })
+  @Column({ type: 'date', nullable: false, select: false })
   birthDate: Date;
 }
