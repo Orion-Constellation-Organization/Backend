@@ -12,6 +12,7 @@ import { EnumUserType } from '../enum/EnumUserType';
 import { AppError } from '../error/AppError';
 import { handleError } from '../utils/ErrorHandler';
 import { LessonRequestService } from './LessonRequestService';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class TutorService extends UserService {
   static formatTutor(tutor: Tutor) {
@@ -128,9 +129,9 @@ export class TutorService extends UserService {
     }
   }
 
-  static async getAllTutors() {
+  static async getAllTutors(params: PaginationParams) {
     try {
-      const tutors = await TutorRepository.findAllTutors();
+      const tutors = await TutorRepository.findAllTutors(params);
       if (!tutors) {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
       }
@@ -145,7 +146,6 @@ export class TutorService extends UserService {
   static async acceptLessonRequest(lessonId: number, tutorId: number, chosenDate: string) {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
-
       if (!lessonRequest) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
       }
