@@ -809,7 +809,7 @@ export class LessonRequestController {
    *               properties:
    *                 message:
    *                   type: string
-   *                   example: "Pedido de aula recusado com sucesso."
+   *                   example: "Aula recusada com sucesso!"
    *       '400':
    *         description: Bad request, invalid data provided
    *         content:
@@ -856,7 +856,7 @@ export class LessonRequestController {
 
     try {
       await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(tutorId));
-      return res.status(200).json({ message: 'Pedido de aula recusado com sucesso.' });
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DECLINED });
     } catch (error) {
       return res.status(400).json({ error: error.message });
     }
