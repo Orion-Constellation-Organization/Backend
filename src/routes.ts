@@ -69,7 +69,7 @@ router.patch('/api/lessonrequest/:lessonId', authMiddleware(), new LessonRequest
 
 router.delete('/api/lessonrequest-cancel', authMiddleware(), new LessonRequestController().cancelTutorLessonRequest);
 
-router.patch('/api/lesson-request-decline', new LessonRequestController().declineLessonRequest);
+router.post('/api/lesson-request-decline', new LessonRequestController().declineLessonRequest);
 
 // Subject route
 router.post('/api/subject', authMiddleware(), new SubjectController().create);
