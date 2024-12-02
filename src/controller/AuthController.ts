@@ -11,10 +11,7 @@ export class AuthController {
    *   post:
    *     summary: Login for Tutor or Student
    *     tags: [Auth]
-   *     consumes:
-   *       - application/json
-   *     produces:
-   *       - application/json
+   *     security: []
    *     requestBody:
    *       required: true
    *       content:
@@ -46,13 +43,12 @@ export class AuthController {
    *                 message:
    *                   type: string
    *                   example: "Login realizado com sucesso!"
-   *                   enum: [EnumSuccessMessages.LOGIN_SUCCESS]
    *                 userId:
    *                   type: integer
    *                   example: 1
    *                 role:
    *                   type: string
-   *                   example: "aluno"
+   *                   example: "tutor"
    *                 token:
    *                   type: string
    *                   description: JWT token for authenticated requests
@@ -66,7 +62,6 @@ export class AuthController {
    *                 message:
    *                   type: string
    *                   example: "Credenciais inválidas."
-   *                   enum: [EnumErrorMessages.INVALID_CREDENTIALS]
    *       '404':
    *         description: Email not found
    *         content:
@@ -77,7 +72,6 @@ export class AuthController {
    *                 message:
    *                   type: string
    *                   example: "Credenciais inválidas."
-   *                   enum: [EnumErrorMessages.INVALID_CREDENTIALS]
    *       '500':
    *         description: Server error
    *         content:
@@ -88,7 +82,6 @@ export class AuthController {
    *                 message:
    *                   type: string
    *                   example: "Erro interno do servidor."
-   *                   enum: [EnumErrorMessages.INTERNAL_SERVER]
    *                 error:
    *                   type: string
    */
@@ -108,9 +101,9 @@ export class AuthController {
 
       return res.status(200).json({
         message: EnumSuccessMessages.LOGIN_SUCCESS,
-        userId: userId,
+        userId,
         role: userRole,
-        token: token
+        token
       });
     } catch (error) {
       const { statusCode, message } = handleError(error);

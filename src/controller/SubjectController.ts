@@ -38,34 +38,10 @@ export class SubjectController {
    *                   example: "Matéria criada com sucesso!"
    *       '400':
    *         description: Subject name is required
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Nome da matéria é obrigatório."
    *       '401':
    *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
    *       '500':
    *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
     path: '/api/register/subject',
@@ -111,24 +87,8 @@ export class SubjectController {
    *                     example: "Matemática"
    *       '401':
    *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
    *       '500':
    *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
    */
   @NoAuthRoute({ path: '/api/get/subject', method: 'get' })
   async getAll(req: Request, res: Response) {
