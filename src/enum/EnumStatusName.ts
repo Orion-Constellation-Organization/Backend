@@ -3,5 +3,6 @@ export enum EnumStatusName {
   ACEITO = 'aceito',
   CONFIRMADO = 'confirmado',
   FINALIZADO = 'finalizado',
+  RECUSADO = 'recusado',
   CANCELADO = 'cancelado'
 }
