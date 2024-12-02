@@ -17,11 +17,19 @@ import { upload } from './config/s3Client';
 
 const router = Router();
 
+// Instâncias dos controladores centralizadas
+const homeController = new HomeController();
+const tutorController = new TutorController();
+const studentController = new StudentController();
+const educationLevelController = new EducationLevelController();
+const authController = new AuthController();
+const lessonRequestController = new LessonRequestController();
+const subjectController = new SubjectController();
+
 /**
  * Home routes
  * @route GET /
  */
-const homeController = new HomeController();
 router.get('/', homeController.hello);
 
 /**
@@ -33,7 +41,6 @@ router.get('/', homeController.hello);
  * @route PATCH /api/photo
  * @route PATCH /api/tutor-accept-lesson
  */
-const tutorController = new TutorController();
 router.post('/api/tutor', TutorValidator.createTutor(), tutorController.create);
 router.get('/api/tutor', authMiddleware(), tutorController.getAll);
 router.get('/api/tutor/:id', authMiddleware(), tutorController.getById);
@@ -49,7 +56,6 @@ router.patch('/api/tutor-accept-lesson', authMiddleware(), tutorController.accep
  * @route GET /api/student-lesson-status
  * @route PATCH /api/student-confirm-lesson
  */
-const studentController = new StudentController();
 router.get('/api/student', authMiddleware(), studentController.getAll);
 router.post('/api/student', StudentValidator.createStudent(), studentController.create);
 router.get('/api/student/:id', authMiddleware(), studentController.getById);
@@ -61,7 +67,6 @@ router.patch('/api/student-confirm-lesson', authMiddleware(), studentController.
  * @route POST /api/educationlevel
  * @route GET /api/educationlevel
  */
-const educationLevelController = new EducationLevelController();
 router.post('/api/educationlevel', authMiddleware(), educationLevelController.create);
 router.get('/api/educationlevel', educationLevelController.getAll);
 
@@ -69,19 +74,18 @@ router.get('/api/educationlevel', educationLevelController.getAll);
  * Auth routes
  * @route POST /api/login
  */
-const authController = new AuthController();
 router.post('/api/login', AuthValidator.login(), authController.login);
 
 /**
  * Lesson Request routes
  * @route POST /api/lessonrequest
+ * @route POST /api/lessonrequest-decline
  * @route GET /api/lessonrequest
  * @route GET /api/lessonrequest/:id
  * @route DELETE /api/lessonrequest/:id
  * @route PATCH /api/lessonrequest/:lessonId
  * @route DELETE /api/lessonrequest-cancel
  */
-const lessonRequestController = new LessonRequestController();
 router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), lessonRequestController.create);
 router.post('/api/lessonrequest-decline', authMiddleware(), new LessonRequestController().declineLessonRequest);
 router.get('/api/lessonrequest', authMiddleware(), LessonRequestValidator.getLessonRequests(), lessonRequestController.getLessonRequests);
@@ -95,7 +99,6 @@ router.delete('/api/lessonrequest-cancel', authMiddleware(), lessonRequestContro
  * @route POST /api/subject
  * @route GET /api/subject
  */
-const subjectController = new SubjectController();
 router.post('/api/subject', authMiddleware(), subjectController.create);
 router.get('/api/subject', authMiddleware(), subjectController.getAll);
 
