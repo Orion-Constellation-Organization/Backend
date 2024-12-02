@@ -187,7 +187,7 @@ export class LessonRequestService {
       }
 
       if (lessonRequest.status !== EnumStatusName.PENDENTE) {
-        throw new AppError(EnumErrorMessages.INVALID_PENDENTE_ACEITO_STATUS, 400);
+        throw new AppError(EnumErrorMessages.INVALID_PENDENTE_STATUS, 400);
       }
 
       const tutor = await TutorRepository.findTutorById(Number(tutorId));
