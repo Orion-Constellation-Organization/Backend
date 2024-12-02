@@ -32,4 +32,11 @@ export class LessonRequestTutor {
     default: EnumStatusName.PENDENTE
   })
   status: EnumStatusName;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true
+  })
+  urlMeet: string;
 }
