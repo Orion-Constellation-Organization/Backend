@@ -5,7 +5,6 @@ import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestRepository {
   static async saveLessonRequest(lessonRequest: LessonRequest): Promise<LessonRequest> {
-    console.log('\n\n\nENTREI');
     const repository = MysqlDataSource.getRepository(LessonRequest);
     return repository.save(lessonRequest);
   }

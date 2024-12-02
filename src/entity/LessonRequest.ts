@@ -16,7 +16,7 @@ export class LessonRequest {
   reason: EnumReasonName[];
 
   @Column({
-    type: 'datetime'
+    type: 'simple-array'
   })
   preferredDates: string[];
 
