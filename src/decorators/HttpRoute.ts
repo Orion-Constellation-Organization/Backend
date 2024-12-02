@@ -8,9 +8,7 @@ type HttpMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 interface RouteOptions {
   path: string;
   method: HttpMethod;
-  middlewares?: Array<
-    (req: Request, res: Response, next: NextFunction) => void
-  >;
+  middlewares?: Array<(req: Request, res: Response, next: NextFunction) => void>;
 }
 
 /**
@@ -18,24 +16,16 @@ interface RouteOptions {
  * @param options {RouteOptions} Configurações da rota (path, method, middlewares).
  */
 export function HttpRoute({ path, method, middlewares = [] }: RouteOptions) {
-  return function (
-    target: unknown,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+  return function (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
-    router[method](
-      path,
-      ...middlewares,
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          await originalMethod.call(target, req, res, next);
-        } catch (error) {
-          next(error);
-        }
+    router[method](path, ...middlewares, async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        await originalMethod.call(target, req, res, next);
+      } catch (error) {
+        next(error);
       }
-    );
+    });
   };
 }
 
@@ -43,27 +33,17 @@ export function HttpRoute({ path, method, middlewares = [] }: RouteOptions) {
  * @description Decorator para rotas simples sem middlewares.
  * @param options {RouteOptions} Configurações da rota (path, method).
  */
-export function NoAuthRoute({
-  path,
-  method
-}: Omit<RouteOptions, 'middlewares'>) {
-  return function (
-    target: unknown,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
+export function NoAuthRoute({ path, method }: Omit<RouteOptions, 'middlewares'>) {
+  return function (target: unknown, propertyKey: string, descriptor: PropertyDescriptor) {
     const originalMethod = descriptor.value;
 
-    router[method](
-      path,
-      async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          await originalMethod.call(target, req, res, next);
-        } catch (error) {
-          next(error);
-        }
+    router[method](path, async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        await originalMethod.call(target, req, res, next);
+      } catch (error) {
+        next(error);
       }
-    );
+    });
   };
 }
 

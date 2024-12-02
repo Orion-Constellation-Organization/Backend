@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { EducationLevelService } from '../service/EducationLevelService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
-import { HttpRoute } from 'decorators/HttpRoute';
+import { HttpRoute } from '../decorators/HttpRoute';
 
 export class EducationLevelController {
   /**
@@ -81,8 +81,7 @@ export class EducationLevelController {
     const { levelType } = req.body;
 
     try {
-      const educationLevel =
-        await EducationLevelService.createEducationLevel(levelType);
+      const educationLevel = await EducationLevelService.createEducationLevel(levelType);
       return res.status(201).json({
         educationLevel,
         message: EnumSuccessMessages.EDUCATION_LEVEL_CREATED
@@ -145,8 +144,7 @@ export class EducationLevelController {
   })
   async getAll(req: Request, res: Response) {
     try {
-      const educationLevels =
-        await EducationLevelService.getAllEducationLevels();
+      const educationLevels = await EducationLevelService.getAllEducationLevels();
       return res.status(200).json(educationLevels);
     } catch (error) {
       const { statusCode, message } = handleError(error);

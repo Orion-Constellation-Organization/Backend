@@ -5,7 +5,7 @@ import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
-import { LessonRequestValidator } from 'validator/LessonRequestValidator';
+import { LessonRequestValidator } from '../validator/LessonRequestValidator';
 
 export class LessonRequestController {
   /**
@@ -181,16 +181,11 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/register/lessonrequest',
     method: 'post',
-    middlewares: [
-      authMiddleware(),
-      ...LessonRequestValidator.createLessonRequest()
-    ]
+    middlewares: [authMiddleware(), ...LessonRequestValidator.createLessonRequest()]
   })
   async create(req: Request, res: Response) {
     try {
-      const lessonRequest = await LessonRequestService.createLessonRequest(
-        req.body
-      );
+      const lessonRequest = await LessonRequestService.createLessonRequest(req.body);
 
       return res.status(201).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CREATED,
@@ -378,10 +373,7 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/get/lessonrequest',
     method: 'get',
-    middlewares: [
-      authMiddleware(),
-      ...LessonRequestValidator.getLessonRequests()
-    ]
+    middlewares: [authMiddleware(), ...LessonRequestValidator.getLessonRequests()]
   })
   async getLessonRequests(req: Request, res: Response) {
     try {
@@ -392,19 +384,8 @@ export class LessonRequestController {
       const orderBy: string = (req.query.orderBy as string) || 'ClassId';
       const filtered: boolean = req.query.filtered === 'true';
       const lessonRequests = filtered
-        ? await LessonRequestService.getFilteredRequests(
-            Number(tutorId),
-            page,
-            size,
-            order,
-            orderBy
-          )
-        : await LessonRequestRepository.listLessonRequests(
-            page,
-            size,
-            order as 'ASC' | 'DESC',
-            orderBy
-          );
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
+        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
 
       return res.status(200).json(lessonRequests);
     } catch (error) {
@@ -536,9 +517,7 @@ export class LessonRequestController {
     const { id } = req.params;
 
     try {
-      const lesson = await LessonRequestService.getLessonRequestById(
-        Number(id)
-      );
+      const lesson = await LessonRequestService.getLessonRequestById(Number(id));
       return res.status(200).json(lesson);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -608,9 +587,7 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(
-        Number(classId)
-      );
+      const deletedRequest = await LessonRequestService.deleteLessonRequestById(Number(classId));
       return res.status(204).end().json({ deletedRequest });
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -718,27 +695,16 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/lessonrequest/:lessonId',
     method: 'patch',
-    middlewares: [
-      authMiddleware(),
-      ...LessonRequestValidator.createLessonRequest()
-    ]
+    middlewares: [authMiddleware(), ...LessonRequestValidator.createLessonRequest()]
   })
   async updateLesson(req: Request, res: Response) {
     try {
       const { lessonId } = req.params;
       const { subjectId, reason, additionalInfo, preferredDates } = req.body;
 
-      await LessonRequestService.updateLessonRequest(
-        Number(lessonId),
-        subjectId,
-        reason,
-        additionalInfo,
-        preferredDates
-      );
+      await LessonRequestService.updateLessonRequest(Number(lessonId), subjectId, reason, additionalInfo, preferredDates);
 
-      return res
-        .status(200)
-        .json({ message: EnumSuccessMessages.LESSON_REQUEST_UPDATED });
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_UPDATED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
@@ -830,14 +796,9 @@ export class LessonRequestController {
     const { classId, tutorId } = req.query;
 
     try {
-      await LessonRequestService.cancelTutorLessonRequestById(
-        Number(classId),
-        Number(tutorId)
-      );
+      await LessonRequestService.cancelTutorLessonRequestById(Number(classId), Number(tutorId));
 
-      return res
-        .status(200)
-        .json({ message: EnumSuccessMessages.LESSON_REQUEST_CANCELED });
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_CANCELED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });

@@ -5,7 +5,7 @@ import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
-import { TutorValidator } from 'validator/TutorValidator';
+import { TutorValidator } from '../validator/TutorValidator';
 
 export class TutorController {
   /**
@@ -183,9 +183,7 @@ export class TutorController {
   })
   async create(req: Request, res: Response) {
     try {
-      const { user: savedTutor, token } = await TutorService.createTutor(
-        req.body
-      );
+      const { user: savedTutor, token } = await TutorService.createTutor(req.body);
 
       return res.status(201).json({
         message: EnumSuccessMessages.TUTOR_CREATED,
@@ -417,16 +415,9 @@ export class TutorController {
 
       const tutor = await TutorService.getTutorById(id);
 
-      await TutorService.updateTutorPersonalData(
-        tutor,
-        expertise,
-        projectReason,
-        subjectIds
-      );
+      await TutorService.updateTutorPersonalData(tutor, expertise, projectReason, subjectIds);
 
-      return res
-        .status(200)
-        .json({ message: EnumSuccessMessages.TUTOR_UPDATED });
+      return res.status(200).json({ message: EnumSuccessMessages.TUTOR_UPDATED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
@@ -508,9 +499,7 @@ export class TutorController {
       const tutor = await TutorService.getTutorById(id);
 
       if (!req.file) {
-        return res
-          .status(400)
-          .json({ message: EnumErrorMessages.PHOTO_REQUIRED });
+        return res.status(400).json({ message: EnumErrorMessages.PHOTO_REQUIRED });
       }
 
       await TutorService.updateTutorPhoto(tutor, req.file);
@@ -763,9 +752,7 @@ export class TutorController {
 
       await TutorService.acceptLessonRequest(lessonId, tutorId, chosenDate);
 
-      return res
-        .status(200)
-        .json({ message: EnumSuccessMessages.LESSON_REQUEST_ACCEPTED });
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_ACCEPTED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });

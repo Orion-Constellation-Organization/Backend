@@ -312,10 +312,7 @@ export class StudentController {
   async getStudentLessons(req: Request, res: Response) {
     try {
       const { id, status } = req.query;
-      const lessons = await StudentService.getStudentLessonsByStatus(
-        Number(id),
-        status as EnumStatusName
-      );
+      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName);
       return res.status(200).json(lessons);
     } catch (error) {
       const { statusCode, message } = handleError(error);

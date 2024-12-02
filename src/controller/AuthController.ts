@@ -3,7 +3,7 @@ import { AuthService } from '../service/AuthService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
-import { AuthValidator } from 'validator/AuthValidator';
+import { AuthValidator } from '../validator/AuthValidator';
 
 export class AuthController {
   /**
@@ -95,11 +95,7 @@ export class AuthController {
     const { email, password, role } = req.body;
 
     try {
-      const {
-        userId,
-        token,
-        role: userRole
-      } = await AuthService.login(email, password, role);
+      const { userId, token, role: userRole } = await AuthService.login(email, password, role);
 
       return res.status(200).json({
         message: EnumSuccessMessages.LOGIN_SUCCESS,
