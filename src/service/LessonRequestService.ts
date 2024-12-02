@@ -57,7 +57,7 @@ export class LessonRequestService {
       lessonRequest.student = foundStudent;
 
       await LessonRequestRepository.saveLessonRequest(lessonRequest);
-      return this.formatLessonRequest(lessonRequest);
+      return lessonRequest;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);
