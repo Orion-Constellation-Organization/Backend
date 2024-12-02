@@ -15,21 +15,35 @@ export class LessonRequestRepository {
     });
   }
 
-  static async listLessonRequests(page: number, size: number, order: 'ASC' | 'DESC', orderBy: string): Promise<LessonRequest[]> {
+  static async listLessonRequests(
+    page: number,
+    size: number,
+    order: 'ASC' | 'DESC',
+    orderBy: string,
+    tutorId?: number
+  ): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
     const skip = (page - 1) * size;
 
-    return repository
+    const query = repository
       .createQueryBuilder('lessonRequest')
       .leftJoinAndSelect('lessonRequest.lessonRequestTutors', 'lessonRequestTutor')
       .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
-      .leftJoinAndSelect('lessonRequest.student', 'student')
-      .orderBy(`lessonRequest.${orderBy}`, order)
-      .skip(skip)
-      .take(size)
-      .getMany();
+      .leftJoinAndSelect('lessonRequest.student', 'student');
+
+    if (tutorId) {
+      query.where(
+        'lessonRequest.id NOT IN (SELECT lessonRequestId FROM lesson_request_tutor WHERE tutorId = :tutorId AND status = :status)',
+        { tutorId, status: 'RECUSADO' }
+      );
+    }
+
+    query.orderBy(`lessonRequest.${orderBy}`, order).skip(skip).take(size);
+
+    return query.getMany();
   }
+
   static async getLessonRequestById(id: number): Promise<LessonRequest | null> {
     return MysqlDataSource.getRepository(LessonRequest)
       .createQueryBuilder('lessonRequest')
@@ -61,20 +75,24 @@ export class LessonRequestRepository {
   ): Promise<LessonRequest[]> {
     const repository = await MysqlDataSource.getRepository(LessonRequest);
     const skip = (page - 1) * size;
-    return repository
+
+    const query = repository
       .createQueryBuilder('lessonRequest')
       .leftJoinAndSelect('lessonRequest.lessonRequestTutors', 'lessonRequestTutor')
-      .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('student.educationLevel', 'educationLevel')
-      .where('lessonRequest.status = :pendente', { pendente: EnumStatusName.PENDENTE })
-      .andWhere('lessonRequestTutor.tutorId = :tutorId', { tutorId })
+      .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
+      .where('lessonRequest.status = :status', { status: EnumStatusName.PENDENTE })
       .andWhere('educationLevel.educationId IN (SELECT educationLevelId FROM tutor_education_levels WHERE tutorId = :tutorId)', { tutorId })
       .andWhere('subject.subjectId IN (SELECT subjectId FROM tutor_subjects_subject WHERE tutorId = :tutorId)', { tutorId })
-      .orderBy(`lessonRequest.${orderBy}`, order)
-      .skip(skip)
-      .take(size)
-      .getMany();
+      .andWhere(
+        `(lessonRequestTutor.tutorId IS NULL OR lessonRequestTutor.tutorId != :tutorId OR lessonRequestTutor.status != :enumRecusado)`,
+        { tutorId, enumRecusado: EnumStatusName.RECUSADO }
+      );
+
+    query.orderBy(`lessonRequest.${orderBy}`, order).skip(skip).take(size);
+
+    return query.getMany();
   }
 }
