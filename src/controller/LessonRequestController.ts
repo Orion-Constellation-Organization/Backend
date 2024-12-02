@@ -373,7 +373,7 @@ export class LessonRequestController {
       const filtered: boolean = req.query.filtered === 'true';
       const lessonRequests = filtered
         ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
-        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
+        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy, Number(tutorId));
 
       return res.status(200).json(lessonRequests);
     } catch (error) {
@@ -762,7 +762,6 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-
   async cancelTutorLessonRequest(req: Request, res: Response) {
     const { classId, tutorId } = req.query;
 
@@ -773,6 +772,93 @@ export class LessonRequestController {
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/lessonrequest-decline:
+   *   post:
+   *     summary: Decline a tutor's lesson request by lessonRequestId and tutorId
+   *     tags:
+   *       - Lesson Request
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - name: lessonRequestId
+   *         in: query
+   *         required: true
+   *         description: ID of the lesson request to decline
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: tutorId
+   *         in: query
+   *         required: true
+   *         description: ID of the tutor who is declining the lesson request
+   *         schema:
+   *           type: integer
+   *           example: 2
+   *     responses:
+   *       '200':
+   *         description: Lesson request declined successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Pedido de aula recusado com sucesso."
+   *       '400':
+   *         description: Bad request, invalid data provided
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Parâmetro inválido"
+   *       '401':
+   *         description: Unauthorized, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token inválido."
+   *       '404':
+   *         description: Lesson request or tutor not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Pedido de aula não encontrado."
+   *       '500':
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
+  async declineLessonRequest(req: Request, res: Response): Promise<Response> {
+    const { lessonRequestId, tutorId } = req.body;
+
+    try {
+      await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(tutorId));
+      return res.status(200).json({ message: 'Pedido de aula recusado com sucesso.' });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
   }
 }
