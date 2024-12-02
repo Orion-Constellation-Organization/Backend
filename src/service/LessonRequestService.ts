@@ -197,11 +197,11 @@ export class LessonRequestService {
 
       const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.ClassId, tutor.id);
 
-      if (!existingLessonRequestTutor) {
-        await LessonRequestTutorRepository.createLessonRequestTutor(lessonRequest, tutor, '', EnumStatusName.RECUSADO);
-      } else {
+      if (existingLessonRequestTutor) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_ALREADY_DECLINED, 400);
       }
+
+      await LessonRequestTutorRepository.createLessonRequestTutor(lessonRequest, tutor, '', EnumStatusName.RECUSADO);
 
       return true;
     } catch (error) {
