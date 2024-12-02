@@ -14,7 +14,10 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
         description: 'Servidor Local'
       }
     ],
-    tags: [{ name: 'Auth', description: 'Rotas relacionadas à autenticação' }],
+    tags: [
+      { name: 'Auth', description: 'Rotas relacionadas à autenticação' },
+      { name: 'Subject', description: 'Rotas relacionadas a matérias' }
+    ],
     components: {
       securitySchemes: {
         BearerAuth: {
