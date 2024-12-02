@@ -27,7 +27,6 @@ export class TutorRepository extends UserRepository {
 
   static async findTutorById(tutorId: number) {
     const repository = MysqlDataSource.getRepository(Tutor);
-
     const tutor = await repository
       .createQueryBuilder('mainTutor')
       .leftJoinAndSelect('mainTutor.lessonRequestTutors', 'lessonRequestTutor')

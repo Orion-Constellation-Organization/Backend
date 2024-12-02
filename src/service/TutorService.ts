@@ -118,10 +118,10 @@ export class TutorService extends UserService {
       const tutor = await TutorRepository.findTutorById(Number(id));
 
       if (!tutor) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
-      return TutorService.formatTutor(tutor);
+      return tutor;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);
