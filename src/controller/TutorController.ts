@@ -9,7 +9,7 @@ import { authMiddleware } from '../middleware/AuthMiddleware';
 export class TutorController {
   /**
    * @swagger
-   * /api/register/tutor:
+   * /api/tutor:
    *   post:
    *     summary: Creation of a new tutor
    *     tags: [Tutor]
@@ -199,7 +199,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/get/tutor:
+   * /api/tutor:
    *   get:
    *     summary: Get all tutors
    *     tags: [Tutor]
@@ -330,7 +330,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/update/tutor:
+   * /api/tutor:
    *   patch:
    *     summary: Update tutor personal data
    *     tags: [Tutor]
@@ -371,62 +371,9 @@ export class TutorController {
    *             schema:
    *               type: object
    *               properties:
-   *                 id:
-   *                   type: integer
-   *                   example: 1
-   *                 username:
+   *                 message:
    *                   type: string
-   *                   example: "nometutor"
-   *                 fullName:
-   *                   type: string
-   *                   example: "Nome Tutor"
-   *                 photoUrl:
-   *                   type: string
-   *                   example: "https://example.com/photo.jpg"
-   *                 birthDate:
-   *                   type: string
-   *                   example: "01/01/1990"
-   *                 expertise:
-   *                   type: string
-   *                   example: "Matemática"
-   *                 projectReason:
-   *                   type: string
-   *                   example: "Ajudar os alunos"
-   *                 educationLevels:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       educationId:
-   *                         type: integer
-   *                         example: 1
-   *                       levelType:
-   *                         type: string
-   *                         example: "Fundamental"
-   *                 lessonRequests:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       ClassId:
-   *                         type: integer
-   *                         example: 14
-   *                       reason:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           example: "reforço"
-   *                       preferredDates:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           example: "29/12/2025 às 23:45"
-   *                       status:
-   *                         type: string
-   *                         example: "pendente"
-   *                       additionalInfo:
-   *                         type: string
-   *                         example: "Looking for a tutor with experience in calculus."
+   *                   example: Tutor atualizado com sucesso!
    *       '401':
    *         description: Unauthorized, missing or invalid token
    *         content:
@@ -487,7 +434,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/update/tutor/photo:
+   * /api/tutor/photo:
    *   patch:
    *     summary: Update tutor photo
    *     tags: [Tutor]
@@ -578,7 +525,7 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/get/tutor/{id}:
+   * /api/tutor/{id}:
    *   get:
    *     summary: Get tutor by ID
    *     tags: [Tutor]
@@ -711,6 +658,113 @@ export class TutorController {
       const { id } = req.params;
       const tutor = await TutorService.getTutorById(Number(id));
       return res.status(200).json(tutor);
+    } catch (error) {
+      const { statusCode, message } = handleError(error);
+      return res.status(statusCode).json({ message });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/lesson-request/accept:
+   *   patch:
+   *     summary: Accept a lesson request
+   *     tags: [Lesson Request]
+   *     security:
+   *       - BearerAuth: []
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               lessonId:
+   *                 type: integer
+   *                 description: ID of the lesson request
+   *                 example: 1
+   *               tutorId:
+   *                 type: integer
+   *                 description: ID of the tutor accepting the lesson request
+   *                 example: 2
+   *               chosenDate:
+   *                 type: string
+   *                 format: date-time
+   *                 description: The date chosen for the lesson
+   *                 example: "2025-06-07T22:45"
+   *     responses:
+   *       '200':
+   *         description: Lesson request accepted successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula aceita com sucesso!"
+   *       '400':
+   *         description: Bad request due to invalid data or conditions
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   enum:
+   *                     - "O status do pedido de aula deve estar como pendente ou como aceito."
+   *                     - "O tutor já está na lista de tutores do pedido de aula."
+   *                     - "Data inválida. Verifique se a data existe."
+   *       '401':
+   *         description: Unauthorized access, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   enum:
+   *                     - "Token inválido."
+   *                     - "Acesso negado. Token não fornecido."
+   *       '404':
+   *         description: Lesson request or tutor not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   enum:
+   *                     - "Aula não encontrada."
+   *                     - "Tutor não encontrado."
+   *       '500':
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
+  @HttpRoute({
+    path: '/api/lesson-request/accept',
+    method: 'patch',
+    middlewares: [authMiddleware()]
+  })
+  async acceptLessonRequest(req: Request, res: Response) {
+    try {
+      const { lessonId, tutorId, chosenDate } = req.body;
+
+      await TutorService.acceptLessonRequest(lessonId, tutorId, chosenDate);
+
+      return res
+        .status(200)
+        .json({ message: EnumSuccessMessages.LESSON_REQUEST_ACCEPTED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });

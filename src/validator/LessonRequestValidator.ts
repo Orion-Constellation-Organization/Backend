@@ -1,4 +1,4 @@
-import { body } from 'express-validator';
+import { body, query } from 'express-validator';
 import { EnumReasonName } from '../enum/EnumReasonName';
 import { BaseValidator } from './BaseValidator';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
@@ -7,28 +7,27 @@ import { SubjectRepository } from '../repository/SubjectRepository';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 import { AppError } from '../error/AppError';
 import { handleError } from '../utils/ErrorHandler';
+import { RequestHandler } from 'express';
 
 export class LessonRequestValidator {
-  static createLessonRequest() {
+  static createLessonRequest(): Array<RequestHandler> {
     return BaseValidator.validationList([
       body('reason')
         .trim()
         .custom((value): boolean => {
           const validReasons = Object.values(EnumReasonName);
-          const invalidReason = EnumErrorMessages.REASON_INVALID.replace(
-            '${validReasons}',
-            validReasons.join(', ')
-          );
+          const invalidReason = EnumErrorMessages.REASON_INVALID.replace('${validReasons}', validReasons.join(', '));
 
           if (!Array.isArray(value)) {
             throw new AppError(invalidReason);
           }
 
+          if (value.length === 0) {
+            throw new AppError(invalidReason);
+          }
+
           for (const reason of value) {
-            if (
-              typeof reason !== 'string' ||
-              !validReasons.includes(reason as EnumReasonName)
-            ) {
+            if (typeof reason !== 'string' || !validReasons.includes(reason as EnumReasonName)) {
               throw new AppError(invalidReason);
             }
           }
@@ -38,8 +37,7 @@ export class LessonRequestValidator {
         .isArray({ min: 1, max: 3 })
         .withMessage(EnumErrorMessages.PREFERRED_DATES_REQUIRED)
         .custom((value): boolean => {
-          const dateRegex =
-            /^(0[1-9]|1[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4} às \d{2}:\d{2}$/;
+          const dateRegex = /^(0[1-9]|1[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4} às \d{2}:\d{2}$/;
           for (const date of value) {
             if (typeof date !== 'string' || !dateRegex.test(date)) {
               throw new Error(EnumErrorMessages.DATE_FORMAT_INVALID);
@@ -75,32 +73,18 @@ export class LessonRequestValidator {
                 const lessonDate = new Date(formattedDate);
                 const now = new Date();
                 if (lessonDate < now) {
-                  throw new AppError(
-                    EnumErrorMessages.PAST_DATE_ERROR.replace('${date}', date)
-                  );
+                  throw new AppError(EnumErrorMessages.PAST_DATE_ERROR.replace('${date}', date));
                 }
 
                 const [hour, minute] = time.split(':');
-                if (
-                  parseInt(hour) < 0 ||
-                  parseInt(hour) > 23 ||
-                  parseInt(minute) < 0 ||
-                  parseInt(minute) > 59
-                ) {
-                  throw new AppError(
-                    EnumErrorMessages.TIME_INVALID.replace('${time}', time)
-                  );
+                if (parseInt(hour) < 0 || parseInt(hour) > 23 || parseInt(minute) < 0 || parseInt(minute) > 59) {
+                  throw new AppError(EnumErrorMessages.TIME_INVALID.replace('${time}', time));
                 }
 
-                const existingLesson =
-                  await LessonRequestRepository.findByPreferredDate(
-                    formattedDate,
-                    studentId
-                  );
+                const existingLesson = await LessonRequestRepository.findByPreferredDate(formattedDate, studentId);
+
                 if (existingLesson) {
-                  throw new AppError(
-                    EnumErrorMessages.EXISTING_LESSON.replace('${date}', date)
-                  );
+                  throw new AppError(EnumErrorMessages.EXISTING_LESSON.replace('${date}', date));
                 }
               })
             );
@@ -159,6 +143,15 @@ export class LessonRequestValidator {
         .withMessage(EnumErrorMessages.ADDITIONAL_INFO_STRING)
         .isLength({ max: 200 })
         .withMessage(EnumErrorMessages.ADDITIONAL_INFO_LENGTH)
+    ]);
+  }
+  static getLessonRequests(): Array<RequestHandler> {
+    return BaseValidator.validationList([
+      query('id').optional().isInt({ min: 1 }).withMessage(EnumErrorMessages.TUTOR_ID_INVALID),
+      query('page').optional().isInt({ min: 1 }).withMessage(EnumErrorMessages.INVALID_PAGE),
+      query('size').optional().isInt({ min: 1 }).withMessage(EnumErrorMessages.INVALID_SIZE),
+      query('order').optional().isIn(['ASC', 'DESC']).withMessage(EnumErrorMessages.ORDER_INVALID),
+      query('orderBy').optional().isString().withMessage(EnumErrorMessages.ORDER_BY_INVALID)
     ]);
   }
 }

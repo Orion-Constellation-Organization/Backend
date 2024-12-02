@@ -7,42 +7,22 @@ export class UserRepository {
   static async findExistingUserByUsername(username: string) {
     const tutorRepository = MysqlDataSource.getRepository(Tutor);
     const studentRepository = MysqlDataSource.getRepository(Student);
-
-    return (
-      (await tutorRepository.findOne({ where: { username } })) ||
-      (await studentRepository.findOne({ where: { username } }))
-    );
+    return tutorRepository.findOne({ where: { username } }) || studentRepository.findOne({ where: { username } });
   }
 
   static async findExistingUserByEmail(email: string) {
     const tutorRepository = MysqlDataSource.getRepository(Tutor);
     const studentRepository = MysqlDataSource.getRepository(Student);
 
-    return (
-      (await tutorRepository.findOne({ where: { email } })) ||
-      (await studentRepository.findOne({ where: { email } }))
-    );
+    return tutorRepository.findOne({ where: { email } }) || studentRepository.findOne({ where: { email } });
   }
 
-  static async findUserByEmail(
-    email: string,
-    userType: EnumUserType.TUTOR | EnumUserType.STUDENT
-  ) {
-    const repository =
-      userType === EnumUserType.TUTOR
-        ? MysqlDataSource.getRepository(Tutor)
-        : MysqlDataSource.getRepository(Student);
-    return await repository.findOne({
+  static async findUserByEmail(email: string, userType: EnumUserType.TUTOR | EnumUserType.STUDENT) {
+    const repository = userType === EnumUserType.TUTOR ? MysqlDataSource.getRepository(Tutor) : MysqlDataSource.getRepository(Student);
+
+    return repository.findOne({
       where: { email },
-      select: [
-        'id',
-        'email',
-        'username',
-        'fullName',
-        'password',
-        'lessonRequests'
-      ],
-      relations: ['lessonRequests']
+      select: ['id', 'email', 'username', 'fullName', 'password']
     });
   }
 }

@@ -14,8 +14,8 @@ interface RouteOptions {
 }
 
 /**
- * Decorator para definir rotas HTTP.
- * @param options {RouteOptions} Opções da rota (path, method, middlewares).
+ * @description Decorator para definir rotas HTTP com suporte a middlewares.
+ * @param options {RouteOptions} Configurações da rota (path, method, middlewares).
  */
 export function HttpRoute({ path, method, middlewares = [] }: RouteOptions) {
   return function (
@@ -28,15 +28,20 @@ export function HttpRoute({ path, method, middlewares = [] }: RouteOptions) {
     router[method](
       path,
       ...middlewares,
-      (req: Request, res: Response, next: NextFunction) => {
-        originalMethod.call(target, req, res, next);
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          await originalMethod.call(target, req, res, next);
+        } catch (error) {
+          next(error);
+        }
       }
     );
   };
 }
 
 /**
- * Decorator for simple HTTP routes without middleware.
+ * @description Decorator para rotas simples sem middlewares.
+ * @param options {RouteOptions} Configurações da rota (path, method).
  */
 export function NoAuthRoute({
   path,
@@ -49,15 +54,22 @@ export function NoAuthRoute({
   ) {
     const originalMethod = descriptor.value;
 
-    router[method](path, (req: Request, res: Response, next: NextFunction) => {
-      originalMethod.call(target, req, res, next);
-    });
+    router[method](
+      path,
+      async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          await originalMethod.call(target, req, res, next);
+        } catch (error) {
+          next(error);
+        }
+      }
+    );
   };
 }
 
 /**
- * Função para obter o router configurado.
- * @returns {Router} O router configurado com as rotas.
+ * @description Função para obter a instância do router configurado.
+ * @returns {Router} Router configurado com as rotas.
  */
 export function getRouter(): Router {
   return router;
