@@ -34,7 +34,7 @@ export class LessonRequestRepository {
 
     if (tutorId) {
       query.where(
-        'lessonRequest.id NOT IN (SELECT lessonRequestId FROM lesson_request_tutor WHERE tutorId = :tutorId AND status = :status)',
+        'lessonRequest.ClassId NOT IN (SELECT lessonRequestId FROM lesson_request_tutor WHERE tutorId = :tutorId AND status = :status)',
         { tutorId, status: 'RECUSADO' }
       );
     }
