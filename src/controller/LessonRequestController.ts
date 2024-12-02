@@ -3,6 +3,8 @@ import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
+import { EnumStatusName } from '../enum/EnumStatusName';
+import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 
 export class LessonRequestController {
   /**
@@ -193,7 +195,7 @@ export class LessonRequestController {
    * @swagger
    * /api/lessonrequest:
    *   get:
-   *     summary: Retrieve lesson requests (all or filtered)
+   *     summary: Retrieve lesson requests (all or filtered by status)
    *     tags:
    *       - Lesson Request
    *     security:
@@ -202,10 +204,23 @@ export class LessonRequestController {
    *       - name: filtered
    *         in: query
    *         required: false
-   *         description: Whether to filter the lesson requests (true or false)
+   *         description: Whether to filter the lesson requests by status
    *         schema:
    *           type: boolean
    *           example: true
+   *       - name: status
+   *         in: query
+   *         required: true
+   *         schema:
+   *           type: string
+   *           enum:
+   *             - pendente
+   *             - aceito
+   *             - confirmado
+   *             - finalizado
+   *             - cancelado
+   *         description: Status name
+   *         example: aceito
    *       - name: id
    *         in: query
    *         required: false
@@ -236,11 +251,11 @@ export class LessonRequestController {
    *           example: ASC
    *       - name: orderBy
    *         in: query
-   *         required: false
+   *         required: true
    *         description: Field to order the results by
    *         schema:
    *           type: string
-   *           example: ClassId
+   *           example: preferredDates or ClassId
    *     responses:
    *       '200':
    *         description: Lesson requests retrieved successfully
@@ -366,14 +381,12 @@ export class LessonRequestController {
   async getLessonRequests(req: Request, res: Response) {
     try {
       const tutorId = req.query.id ? Number(req.query.id) : null;
-      const page = Number(req.query.page) || 1;
-      const size = Number(req.query.size) || 10;
-      const order: string = (req.query.order as string)?.toUpperCase() || 'ASC';
-      const orderBy: string = (req.query.orderBy as string) || 'ClassId';
+      const status = req.query.status as EnumStatusName;
+      const params = sanitizePaginationParams(req.query);
       const filtered: boolean = req.query.filtered === 'true';
       const lessonRequests = filtered
-        ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
-        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), status, params)
+        : await LessonRequestRepository.listLessonRequests(params);
 
       return res.status(200).json(lessonRequests);
     } catch (error) {
