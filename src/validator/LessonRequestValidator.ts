@@ -35,76 +35,49 @@ export class LessonRequestValidator {
           }
           return true;
         }),
-      // body('preferredDates')
-      //   .isArray({ min: 1, max: 3 })
-      //   .withMessage(EnumErrorMessages.PREFERRED_DATES_REQUIRED)
-      //   .custom((value): boolean => {
-      //     const dateRegex = /^(0[1-9]|1[0-9]|2[0-9]|3[0-1])\/(0[1-9]|1[0-2])\/\d{4} às \d{2}:\d{2}$/;
-      //     for (const date of value) {
-      //       if (typeof date !== 'string' || !dateRegex.test(date)) {
-      //         throw new Error(EnumErrorMessages.DATE_FORMAT_INVALID);
-      //       }
-      //       const [day, month, yearTime] = date.split('/');
-      //       const [year] = yearTime.split(' às ');
-      //       const dateObject = new Date(`${year}-${month}-${day}`);
-      //       if (
-      //         dateObject.getFullYear() !== parseInt(year) ||
-      //         dateObject.getMonth() + 1 !== parseInt(month) ||
-      //         dateObject.getDate() !== parseInt(day)
-      //       ) {
-      //         throw new AppError(EnumErrorMessages.DATE_INVALID);
-      //       }
-      //     }
-      //     return true;
-      //   })
-      //   .custom(async (value, { req }) => {
-      //     try {
-      //       const studentId = req.body.studentId;
+      body('preferredDates')
+        .isArray({ min: 1, max: 3 })
+        .withMessage(EnumErrorMessages.PREFERRED_DATES_REQUIRED)
+        .custom(async (value, { req }) => {
+          const dateRegex = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])T([01][0-9]|2[0-3]):[0-5][0-9]$/;
 
-      //       const uniqueDates = new Set(value);
-      //       if (uniqueDates.size !== value.length) {
-      //         throw new AppError(EnumErrorMessages.DUPLICATE_PREFERRED_DATES);
-      //       }
+          for (const date of value) {
+            if (typeof date !== 'string' || !dateRegex.test(date)) {
+              throw new Error(EnumErrorMessages.DATE_FORMAT_INVALID);
+            }
 
-      //       await Promise.all(
-      //         value.map(async (date) => {
-      //           const [day, month, yearTime] = date.split('/');
-      //           const [year, time] = yearTime.split(' às ');
-      //           const formattedDate = `${year}-${month}-${day} ${time}`;
+            const dateObject = new Date(date);
+            if (isNaN(dateObject.getTime())) {
+              throw new Error(EnumErrorMessages.DATE_INVALID);
+            }
 
-      //           const lessonDate = new Date(formattedDate);
-      //           const now = new Date();
-      //           if (lessonDate < now) {
-      //             throw new AppError(EnumErrorMessages.PAST_DATE_ERROR.replace('${date}', date));
-      //           }
+            const currentDate = new Date();
+            if (dateObject < currentDate) {
+              throw new Error(EnumErrorMessages.PAST_DATE_ERROR.replace('${date}', date));
+            }
 
-      //           const [hour, minute] = time.split(':');
-      //           if (parseInt(hour) < 0 || parseInt(hour) > 23 || parseInt(minute) < 0 || parseInt(minute) > 59) {
-      //             throw new AppError(EnumErrorMessages.TIME_INVALID.replace('${time}', time));
-      //           }
+            const oneYearFromNow = new Date();
+            oneYearFromNow.setFullYear(currentDate.getFullYear() + 1);
+            if (dateObject > oneYearFromNow) {
+              throw new Error(EnumErrorMessages.DATE_INVALID);
+            }
+          }
 
-      //           const existingLesson = await LessonRequestRepository.findByPreferredDate(formattedDate, studentId);
+          const uniqueDates = new Set(value);
+          if (uniqueDates.size !== value.length) {
+            throw new Error(EnumErrorMessages.DUPLICATE_PREFERRED_DATES);
+          }
 
-      //           if (existingLesson) {
-      //             throw new AppError(EnumErrorMessages.EXISTING_LESSON.replace('${date}', date));
-      //           }
-      //         })
-      //       );
-      //       return true;
-      //     } catch (error) {
-      //       const { statusCode, message } = handleError(error);
-      //       throw new AppError(message, statusCode);
-      //     }
-      //   })
-      //   .customSanitizer((value) => {
-      //     return value.map((date) => {
-      //       if (typeof date === 'string' && date.includes('/')) {
-      //         const [day, month, yearTime] = date.split('/');
-      //         const [year, time] = yearTime.split(' às ');
-      //         return `${year}-${month}-${day} ${time}`;
-      //       }
-      //     });
-      //   }),
+          const studentId = req.body.studentId;
+          for (const date of value) {
+            const existingLesson = await LessonRequestRepository.findByPreferredDate(date, studentId);
+            if (existingLesson) {
+              throw new Error(EnumErrorMessages.EXISTING_LESSON.replace('${date}', date));
+            }
+          }
+
+          return true;
+        }),
       body('subjectId')
         .isInt()
         .withMessage(EnumErrorMessages.SUBJECT_ID_INVALID)
