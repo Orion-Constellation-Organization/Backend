@@ -135,7 +135,7 @@ router.get(
 );
 router.delete(
   '/api/lessonrequest/:id',
-  lessonRequestController.DeleteById
+  lessonRequestController.deleteById
 );
 router.patch(
   '/api/lessonrequest/:lessonId',

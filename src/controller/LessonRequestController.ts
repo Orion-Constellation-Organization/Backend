@@ -558,7 +558,7 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno no servidor"
    */
-  async DeleteById(req: Request, res: Response) {
+  async deleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
     if (isNaN(classId) || classId <= 0) {
