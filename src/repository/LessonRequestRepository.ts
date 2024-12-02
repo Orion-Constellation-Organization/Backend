@@ -1,9 +1,11 @@
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { MysqlDataSource } from '../config/database';
 import { LessonRequest } from '../entity/LessonRequest';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestRepository {
   static async saveLessonRequest(lessonRequest: LessonRequest): Promise<LessonRequest> {
+    console.log('\n\n\nENTREI');
     const repository = MysqlDataSource.getRepository(LessonRequest);
     return repository.save(lessonRequest);
   }
@@ -15,9 +17,9 @@ export class LessonRequestRepository {
     });
   }
 
-  static async listLessonRequests(page: number, size: number, order: 'ASC' | 'DESC', orderBy: string): Promise<LessonRequest[]> {
+  static async listLessonRequests(params: PaginationParams): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
-    const skip = (page - 1) * size;
+    const skip = (params.page - 1) * params.size;
 
     return repository
       .createQueryBuilder('lessonRequest')
@@ -25,9 +27,9 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
-      .orderBy(`lessonRequest.${orderBy}`, order)
+      .orderBy(`lessonRequest.${params.orderBy}`, params.order)
       .skip(skip)
-      .take(size)
+      .take(params.size)
       .getMany();
   }
   static async getLessonRequestById(id: number): Promise<LessonRequest | null> {
@@ -52,15 +54,9 @@ export class LessonRequestRepository {
     await repository.delete({ ClassId });
   }
 
-  static async getFilteredRequests(
-    tutorId: number,
-    page: number,
-    size: number,
-    order: 'ASC' | 'DESC',
-    orderBy: string
-  ): Promise<LessonRequest[]> {
+  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
     const repository = await MysqlDataSource.getRepository(LessonRequest);
-    const skip = (page - 1) * size;
+    const skip = (params.page - 1) * params.size;
     return repository
       .createQueryBuilder('lessonRequest')
       .leftJoinAndSelect('lessonRequest.lessonRequestTutors', 'lessonRequestTutor')
@@ -68,13 +64,12 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('student.educationLevel', 'educationLevel')
-      .where('lessonRequest.status = :pendente', { pendente: EnumStatusName.PENDENTE })
-      .andWhere('lessonRequestTutor.tutorId = :tutorId', { tutorId })
+      .where('lessonRequest.status = :status', { status })
       .andWhere('educationLevel.educationId IN (SELECT educationLevelId FROM tutor_education_levels WHERE tutorId = :tutorId)', { tutorId })
       .andWhere('subject.subjectId IN (SELECT subjectId FROM tutor_subjects_subject WHERE tutorId = :tutorId)', { tutorId })
-      .orderBy(`lessonRequest.${orderBy}`, order)
+      .orderBy(`lessonRequest.${params.orderBy}`, params.order)
       .skip(skip)
-      .take(size)
+      .take(params.size)
       .getMany();
   }
 }
