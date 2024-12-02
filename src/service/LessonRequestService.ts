@@ -199,6 +199,8 @@ export class LessonRequestService {
 
       if (!existingLessonRequestTutor) {
         await LessonRequestTutorRepository.createLessonRequestTutor(lessonRequest, tutor, '', EnumStatusName.RECUSADO);
+      } else {
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_ALREADY_DECLINED, 400);
       }
 
       return true;
