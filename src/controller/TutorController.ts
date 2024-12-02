@@ -5,6 +5,7 @@ import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
+import { TutorValidator } from 'validator/TutorValidator';
 
 export class TutorController {
   /**
@@ -178,7 +179,7 @@ export class TutorController {
   @HttpRoute({
     path: '/api/tutor',
     method: 'post',
-    middlewares: [authMiddleware()]
+    middlewares: [...TutorValidator.createTutor(), authMiddleware()]
   })
   async create(req: Request, res: Response) {
     try {

@@ -3,6 +3,7 @@ import { AuthService } from '../service/AuthService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
+import { AuthValidator } from 'validator/AuthValidator';
 
 export class AuthController {
   /**
@@ -87,7 +88,8 @@ export class AuthController {
    */
   @HttpRoute({
     path: '/api/login',
-    method: 'post'
+    method: 'post',
+    middlewares: AuthValidator.login()
   })
   public async login(req: Request, res: Response): Promise<Response> {
     const { email, password, role } = req.body;

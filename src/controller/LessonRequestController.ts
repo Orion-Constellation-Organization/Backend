@@ -5,6 +5,7 @@ import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
+import { LessonRequestValidator } from 'validator/LessonRequestValidator';
 
 export class LessonRequestController {
   /**
@@ -180,7 +181,10 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/register/lessonrequest',
     method: 'post',
-    middlewares: [authMiddleware()]
+    middlewares: [
+      authMiddleware(),
+      ...LessonRequestValidator.createLessonRequest()
+    ]
   })
   async create(req: Request, res: Response) {
     try {
@@ -374,7 +378,10 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/get/lessonrequest',
     method: 'get',
-    middlewares: [authMiddleware()]
+    middlewares: [
+      authMiddleware(),
+      ...LessonRequestValidator.getLessonRequests()
+    ]
   })
   async getLessonRequests(req: Request, res: Response) {
     try {
@@ -711,7 +718,10 @@ export class LessonRequestController {
   @HttpRoute({
     path: '/api/lessonrequest/:lessonId',
     method: 'patch',
-    middlewares: [authMiddleware()]
+    middlewares: [
+      authMiddleware(),
+      ...LessonRequestValidator.createLessonRequest()
+    ]
   })
   async updateLesson(req: Request, res: Response) {
     try {

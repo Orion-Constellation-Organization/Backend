@@ -1,9 +1,10 @@
+import { StudentValidator } from './../validator/StudentValidator';
 import { Request, Response } from 'express';
 import { StudentService } from '../service/StudentService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
-import { HttpRoute, NoAuthRoute } from '../decorators/HttpRoute';
+import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class StudentController {
@@ -133,11 +134,10 @@ export class StudentController {
    *                 error:
    *                   type: string
    */
-  @NoAuthRoute({ path: '/api/register/student', method: 'post' })
   @HttpRoute({
-    path: '/api/student',
+    path: '/api/register/student',
     method: 'post',
-    middlewares: [authMiddleware()]
+    middlewares: [...StudentValidator.createStudent()]
   })
   async create(req: Request, res: Response) {
     try {
