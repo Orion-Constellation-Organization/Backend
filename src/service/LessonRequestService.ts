@@ -10,6 +10,7 @@ import { StudentService } from './StudentService';
 import { TutorService } from './TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestService {
   static formatLessonRequest(lessonRequest: LessonRequest) {
@@ -163,12 +164,13 @@ export class LessonRequestService {
     return updatedLessonRequest;
   }
 
-  static async getFilteredRequests(tutorId: number, page: number, size: number, order: string, orderBy: string): Promise<LessonRequest[]> {
+  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
     }
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, page, size, order as 'ASC' | 'DESC', orderBy);
+
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params);
     return lessonRequests;
   }
 }
