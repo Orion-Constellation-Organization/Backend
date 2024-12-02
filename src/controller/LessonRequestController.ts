@@ -597,6 +597,9 @@ export class LessonRequestController {
    *           schema:
    *             type: object
    *             properties:
+   *               id:
+   *                 type: integer
+   *                 example: 1
    *               subjectId:
    *                 type: integer
    *                 example: 1
@@ -671,7 +674,6 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-
   async updateLesson(req: Request, res: Response) {
     try {
       const { lessonId } = req.params;
