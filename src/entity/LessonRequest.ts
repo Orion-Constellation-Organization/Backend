@@ -42,4 +42,11 @@ export class LessonRequest {
     nullable: true
   })
   additionalInfo: string;
+
+  @Column({
+    type: 'varchar',
+    length: 255,
+    nullable: true
+  })
+  urlMeet: string;
 }
