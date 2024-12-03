@@ -227,7 +227,7 @@ export class StudentController {
    *                           type: array
    *                           items:
    *                             type: string
-   *                             example: "29/12/2025 às 23:45"
+   *                             example: "2025-12-29T23:45"
    *                         status:
    *                           type: string
    *                           example: "pendente"
@@ -517,7 +517,7 @@ export class StudentController {
    *                     items:
    *                       type: string
    *                       format: date-time
-   *                     example: ["2025-12-15 22:00", "2024-11-25 22:00"]
+   *                     example: ["2025-12-15T22:00", "2024-11-25T22:00"]
    *                   status:
    *                     type: string
    *                     example: "pendente"
@@ -645,7 +645,7 @@ export class StudentController {
    *                       items:
    *                         type: string
    *                         format: date-time
-   *                       example: ["2025-12-14 22:30"]
+   *                       example: ["2025-12-14T22:30"]
    *                     status:
    *                       type: string
    *                       example: "confirmado"
@@ -715,7 +715,7 @@ export class StudentController {
    *                           chosenDate:
    *                             type: string
    *                             format: date-time
-   *                             example: "2025-12-14 22:30"
+   *                             example: "2025-12-14T22:30"
    *       '400':
    *         description: Invalid request due to incorrect data or status
    *         content:
@@ -763,6 +763,7 @@ export class StudentController {
 
       const lessonRequest = await StudentService.confirmLessonRequest(lessonId, tutorId);
       const createMeet = await N8nService.triggerGoogleMeetWebhook(lessonRequest);
+
       return res.status(200).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CONFIRMED,
         createMeet

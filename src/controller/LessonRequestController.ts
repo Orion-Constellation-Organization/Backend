@@ -61,9 +61,6 @@ export class LessonRequestController {
    *                 lessonRequest:
    *                   type: object
    *                   properties:
-   *                     ClassId:
-   *                       type: integer
-   *                       example: 13
    *                     reason:
    *                       type: array
    *                       items:
@@ -74,12 +71,12 @@ export class LessonRequestController {
    *                       items:
    *                         type: string
    *                       example: ["2025-12-25T23:45"]
-   *                     status:
-   *                       type: string
-   *                       example: "pendente"
    *                     additionalInfo:
    *                       type: string
    *                       example: "Looking for a tutor with experience in calculus."
+   *                     status:
+   *                       type: string
+   *                       example: "pendente"
    *                     subject:
    *                       type: object
    *                       properties:
@@ -114,6 +111,9 @@ export class LessonRequestController {
    *                             levelType:
    *                               type: string
    *                               example: "Fundamental"
+   *                     ClassId:
+   *                       type: integer
+   *                       example: 12
    *       '400':
    *         description: Bad request, validation errors
    *         content:
@@ -255,7 +255,7 @@ export class LessonRequestController {
    *         description: Field to order the results by
    *         schema:
    *           type: string
-   *           example: preferredDates or ClassId
+   *           example: ClassId
    *     responses:
    *       '200':
    *         description: Lesson requests retrieved successfully

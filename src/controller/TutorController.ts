@@ -114,7 +114,7 @@ export class TutorController {
    *                         type: array
    *                         items:
    *                           type: string
-   *                           example: "29/12/2025 às 23:45"
+   *                           example: "2025-12-29T23:45"
    *                       status:
    *                         type: string
    *                         example: "pendente"
@@ -285,7 +285,7 @@ export class TutorController {
    *                           type: array
    *                           items:
    *                             type: string
-   *                             example: "29/12/2025 às 23:45"
+   *                             example: "2025-12-29T23:45"
    *                         status:
    *                           type: string
    *                           example: "pendente"

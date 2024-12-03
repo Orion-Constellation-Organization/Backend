@@ -80,7 +80,7 @@ export enum EnumErrorMessages {
   BIRTH_DATE_FORMAT = 'Data de nascimento deve estar no formato DD/MM/YYYY.',
   BIRTH_DATE_INCORRECT = 'Data de nascimento incorreta, verifique a data inserida.',
   BIRTH_DATE_FUTURE = 'Data de nascimento não pode ser uma data futura.',
-  DATE_FORMAT_INVALID = 'Data inválida. O formato correto é yyyy-MM-ddTHH:mm.',
+  DATE_FORMAT_INVALID = 'Data inválida. O formato correto é dd/MM/yyyy às HH:mm.',
   DATE_INVALID = 'Data inválida. Verifique se a data existe.',
   PREFERRED_DATES_INVALID = 'Datas preferidas são inválidas.',
   DUPLICATE_PREFERRED_DATES = 'Datas preferidas não podem ser duplicadas.',
