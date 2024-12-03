@@ -73,7 +73,7 @@ describe('updatePersonalData', () => {
     );
   });
 
-  it('should return 404 if tutor is not found', async () => {
+  it('should return 400 if tutor is not found', async () => {
     req.body = { id: 999 };
 
     MysqlDataSource.getRepository = jest.fn().mockReturnValue({
@@ -87,7 +87,7 @@ describe('updatePersonalData', () => {
 
     await updatePersonalData(req as Request, res as Response);
 
-    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith({
       message: EnumErrorMessages.TUTOR_NOT_FOUND
     });
