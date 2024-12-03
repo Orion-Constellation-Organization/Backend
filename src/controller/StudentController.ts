@@ -4,7 +4,7 @@ import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
-import { N8nService } from '../service/N8nService';
+import { N8nService } from '../third-party/N8nService';
 
 export class StudentController {
   /**
@@ -762,11 +762,11 @@ export class StudentController {
       const { lessonId, tutorId } = req.body;
 
       const lessonRequest = await StudentService.confirmLessonRequest(lessonId, tutorId);
-      const createMeet = await N8nService.triggerGoogleMeetWebhook(lessonRequest);
+      await N8nService.triggerGoogleMeetWebhook(lessonRequest);
 
       return res.status(200).json({
         message: EnumSuccessMessages.LESSON_REQUEST_CONFIRMED,
-        createMeet
+        lessonRequest
       });
     } catch (error) {
       const { statusCode, message } = handleError(error);
