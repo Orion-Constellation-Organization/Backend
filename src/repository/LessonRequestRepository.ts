@@ -39,6 +39,10 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('tutor.subjects', 'subjects')
+      .addSelect('tutor.email')
+      .addSelect('student.email')
+      .addSelect('tutor.fullName')
+      .addSelect('student.fullName')
       .where('lessonRequest.classId = :id', { id })
       .getOne();
   }
@@ -70,5 +74,14 @@ export class LessonRequestRepository {
       .skip(skip)
       .take(params.size)
       .getMany();
+  }
+
+  static async saveMeetUrl(classId: number, hangoutLink: string): Promise<void> {
+    const repository = MysqlDataSource.getRepository(LessonRequest);
+    const lesson = await repository.findOne({ where: { classId } });
+    if (lesson) {
+      lesson.urlMeet = hangoutLink;
+      await repository.save(lesson);
+    }
   }
 }
