@@ -47,6 +47,22 @@ services:
       timeout: 3s
       retries: 3
 
+  n8n:
+    container_name: n8n
+    image: docker.n8n.io/n8nio/n8n
+    ports:
+      - 5678:5678
+    environment:
+      N8N_PORT: 5678
+      N8N_HOST: localhost
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - orion-constellation-connect
+
 networks:
   orion-constellation-connect:
     driver: bridge
+
+volumes:
+  n8n_data:
