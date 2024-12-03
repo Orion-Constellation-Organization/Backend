@@ -15,7 +15,7 @@ import { PaginationParams } from '../interface/PaginationParams';
 export class LessonRequestService {
   static formatLessonRequest(lessonRequest: LessonRequest) {
     return {
-      ClassId: lessonRequest.ClassId,
+      classId: lessonRequest.classId,
       reason: Array.isArray(lessonRequest.reason) ? lessonRequest.reason : [lessonRequest.reason],
       preferredDates: lessonRequest.preferredDates ? lessonRequest.preferredDates : [],
       status: lessonRequest.status,

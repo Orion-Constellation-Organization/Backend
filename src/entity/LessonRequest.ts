@@ -8,7 +8,7 @@ import { LessonRequestTutor } from './LessonRequestTutor';
 @Entity()
 export class LessonRequest {
   @PrimaryGeneratedColumn()
-  ClassId: number;
+  classId: number;
 
   @Column({
     type: 'simple-array'

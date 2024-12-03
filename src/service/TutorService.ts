@@ -26,7 +26,7 @@ export class TutorService extends UserService {
       projectReason: tutor.projectReason,
       lessonRequestTutors: tutor.lessonRequestTutors
         ? tutor.lessonRequestTutors.map((lessonRequestTutor) => ({
-            lessonRequestId: lessonRequestTutor.lessonRequest.ClassId,
+            lessonRequestId: lessonRequestTutor.lessonRequest.classId,
             chosenDate: lessonRequestTutor.chosenDate,
             lessonRequest: LessonRequestService.formatLessonRequest(lessonRequestTutor.lessonRequest)
           }))
@@ -159,7 +159,7 @@ export class TutorService extends UserService {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
       }
 
-      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.ClassId, tutor.id);
+      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.classId, tutor.id);
 
       if (existingLessonRequestTutor) {
         throw new AppError(EnumErrorMessages.TUTOR_ALREADY_ADDED, 400);

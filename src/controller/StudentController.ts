@@ -4,7 +4,7 @@ import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
-import { N8nService } from '../service/n8nService';
+import { N8nService } from '../service/N8nService';
 
 export class StudentController {
   /**
@@ -215,7 +215,7 @@ export class StudentController {
    *                     items:
    *                       type: object
    *                       properties:
-   *                         ClassId:
+   *                         classId:
    *                           type: integer
    *                           example: 14
    *                         reason:
@@ -314,7 +314,7 @@ export class StudentController {
    *                   items:
    *                     type: object
    *                     properties:
-   *                       ClassId:
+   *                       classId:
    *                         type: integer
    *                         example: 1
    *                       reason:
@@ -504,7 +504,7 @@ export class StudentController {
    *               items:
    *                 type: object
    *                 properties:
-   *                   ClassId:
+   *                   classId:
    *                     type: integer
    *                     example: 3
    *                   reason:
@@ -632,7 +632,7 @@ export class StudentController {
    *                 lessonRequest:
    *                   type: object
    *                   properties:
-   *                     ClassId:
+   *                     classId:
    *                       type: integer
    *                       example: 20
    *                     reason:

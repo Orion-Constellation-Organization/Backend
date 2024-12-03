@@ -111,7 +111,7 @@ export class LessonRequestController {
    *                             levelType:
    *                               type: string
    *                               example: "Fundamental"
-   *                     ClassId:
+   *                     classId:
    *                       type: integer
    *                       example: 12
    *       '400':
@@ -255,7 +255,7 @@ export class LessonRequestController {
    *         description: Field to order the results by
    *         schema:
    *           type: string
-   *           example: ClassId
+   *           example: classId
    *     responses:
    *       '200':
    *         description: Lesson requests retrieved successfully
@@ -266,7 +266,7 @@ export class LessonRequestController {
    *               items:
    *                 type: object
    *                 properties:
-   *                   ClassId:
+   *                   classId:
    *                     type: integer
    *                     example: 1
    *                   reason:
@@ -420,7 +420,7 @@ export class LessonRequestController {
    *             schema:
    *               type: object
    *               properties:
-   *                 ClassId:
+   *                 classId:
    *                   type: integer
    *                   example: 1
    *                 reason:
@@ -705,7 +705,7 @@ export class LessonRequestController {
    *   post:
    *     summary: Cancel a tutor's lesson request relationship by classId and tutorId
    *     tags:
-   *       - Lesson Request
+   *       - Tutor Lesson
    *     security:
    *       - BearerAuth: []
    *     parameters:

@@ -22,7 +22,7 @@ export function sanitizePaginationParams(query: PaginationParams): PaginationPar
   }
 
   if (query.orderBy) {
-    const allowedFields = ['ClassId', 'id', 'status', 'preferredDates', 'fullName'];
+    const allowedFields = ['classId', 'id', 'status', 'preferredDates', 'fullName'];
     params.orderBy = allowedFields.includes(query.orderBy) ? query.orderBy : 'id';
   }
 

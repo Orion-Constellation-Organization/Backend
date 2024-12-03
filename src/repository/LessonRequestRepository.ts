@@ -39,18 +39,18 @@ export class LessonRequestRepository {
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('tutor.subjects', 'subjects')
-      .where('lessonRequest.ClassId = :id', { id })
+      .where('lessonRequest.classId = :id', { id })
       .getOne();
   }
 
-  static async findByClassId(ClassId: number): Promise<LessonRequest[]> {
+  static async findByClassId(classId: number): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
-    return repository.find({ where: { ClassId } });
+    return repository.find({ where: { classId } });
   }
 
-  static async deleteByClassId(ClassId: number): Promise<void> {
+  static async deleteByClassId(classId: number): Promise<void> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
-    await repository.delete({ ClassId });
+    await repository.delete({ classId });
   }
 
   static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {

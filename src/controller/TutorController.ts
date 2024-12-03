@@ -102,7 +102,7 @@ export class TutorController {
    *                   items:
    *                     type: object
    *                     properties:
-   *                       ClassId:
+   *                       classId:
    *                         type: integer
    *                         example: 14
    *                       reason:
@@ -273,7 +273,7 @@ export class TutorController {
    *                     items:
    *                       type: object
    *                       properties:
-   *                         ClassId:
+   *                         classId:
    *                           type: integer
    *                           example: 14
    *                         reason:
@@ -583,7 +583,7 @@ export class TutorController {
    *                   items:
    *                     type: object
    *                     properties:
-   *                       ClassId:
+   *                       classId:
    *                         type: integer
    *                         example: 14
    *                       reason:
@@ -660,7 +660,7 @@ export class TutorController {
    * /api/tutor-accept-lesson:
    *   patch:
    *     summary: Accept a lesson request
-   *     tags: [Lesson Request]
+   *     tags: [Tutor Lesson]
    *     security:
    *       - BearerAuth: []
    *     requestBody:
