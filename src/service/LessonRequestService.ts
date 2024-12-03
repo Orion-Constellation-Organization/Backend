@@ -48,10 +48,10 @@ export class LessonRequestService {
       ]);
 
       if (!foundSubject) {
-        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 400);
       }
       if (!foundStudent) {
-        throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 400);
       }
 
       lessonRequest.subject = foundSubject;
@@ -68,7 +68,7 @@ export class LessonRequestService {
   static async getLessonRequestById(id: number): Promise<LessonRequest> {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(id);
     if (!lessonRequest) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     return lessonRequest;
@@ -85,7 +85,7 @@ export class LessonRequestService {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
       if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       if (lessonRequest.status === EnumStatusName.ACEITO) {
@@ -100,7 +100,7 @@ export class LessonRequestService {
       const foundSubject = await SubjectRepository.findSubjectById(subjectId);
 
       if (!foundSubject) {
-        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 400);
       }
 
       lessonRequest.reason = reason;
@@ -122,7 +122,7 @@ export class LessonRequestService {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
 
       if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       await LessonRequestRepository.deleteByClassId(classId);
@@ -135,7 +135,7 @@ export class LessonRequestService {
     const lessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(classId, tutorId);
 
     if (!lessonRequestTutor) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     if (lessonRequestTutor.status !== EnumStatusName.ACEITO) {
@@ -155,7 +155,7 @@ export class LessonRequestService {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
     if (!lessonRequest) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     if (lessonRequest.status === EnumStatusName.ACEITO && status !== EnumStatusName.PENDENTE) {
