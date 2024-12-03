@@ -114,10 +114,10 @@ export class StudentService extends UserService {
 
       lessonRequest.lessonRequestTutors = lessonRequest.lessonRequestTutors.filter((lrt) => lrt.id === lessonRequestTutor.id);
 
-      //lessonRequest.status = EnumStatusName.CONFIRMADO;
+      lessonRequest.status = EnumStatusName.CONFIRMADO;
       await LessonRequestRepository.saveLessonRequest(lessonRequest);
 
-      return LessonRequestService.formatLessonRequest(lessonRequest);
+      return lessonRequest;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);
