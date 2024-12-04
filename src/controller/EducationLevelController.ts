@@ -8,7 +8,7 @@ import { authMiddleware } from 'middleware/AuthMiddleware';
 export class EducationLevelController {
   /**
    * @swagger
-   * /api/educationLevel:
+   * /api/educationlevel:
    *   post:
    *     summary: Create a new education level
    *     tags: [Education Level]
