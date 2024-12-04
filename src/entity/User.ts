@@ -9,8 +9,7 @@ export class User {
     type: 'varchar',
     length: 255,
     unique: true,
-    nullable: false,
-    select: false
+    nullable: false
   })
   username: string;
 

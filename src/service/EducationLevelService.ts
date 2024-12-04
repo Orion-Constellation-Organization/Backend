@@ -24,7 +24,7 @@ export class EducationLevelService {
     try {
       const educationLevels = await EducationLevelRepository.findAllEducationLevels();
       if (!educationLevels) {
-        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 400);
       }
       return educationLevels;
     } catch (error) {

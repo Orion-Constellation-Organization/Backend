@@ -59,6 +59,7 @@ export enum EnumErrorMessages {
   INVALID_PENDENTE_STATUS = 'O status do pedido de aula deve estar como pendente.',
   INVALID_PENDENTE_ACEITO_STATUS = 'O status do pedido de aula deve estar como pendente ou como aceito.',
   INVALID_ACEITO_STATUS = 'O status do pedido de aula deve estar como aceito.',
+  INVALID_STATUS = 'Status inválido.',
   TUTOR_ALREADY_ADDED = 'O tutor já está na lista de tutores do pedido de aula.',
   LESSON_REQUEST_ALREADY_CONFIRMED = 'A aula já foi confirmada, não é possível confirmar novamente.',
   INVALID_PAGE = 'Página inválida.',
