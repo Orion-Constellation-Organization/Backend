@@ -19,7 +19,10 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
       { name: 'Auth', description: 'Rotas relacionadas à autenticação' },
       { name: 'Education Level', description: 'Rotas relacionadas aos níveis de ensino' }
     ,
-      { name: 'Subject', description: 'Rotas relacionadas a matérias' }
+      { name: 'Subject', description: 'Rotas relacionadas a matérias' },
+      { name: 'Student', description: 'Rotas relacionadas a estudantes' },
+      { name: 'Student Lessons', description: 'Rotas relacionadas às aulas dos estudantes' },
+      { name: 'Lesson Request', description: 'Rotas relacionadas às solicitações de aulas' }
     ],
     components: {
       schemas: {
@@ -46,59 +49,10 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
       },
       securitySchemes: {
         BearerAuth: {
+          in: 'header',
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
-        }
-      },
-      responses: {
-        Unauthorized: {
-          description: 'Unauthorized, missing or invalid token',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Token inválido.'
-                  }
-                }
-              }
-            }
-          }
-        },
-        BadRequest: {
-          description: 'Bad request, invalid or missing parameters',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Nível de ensino é obrigatório.'
-                  }
-                }
-              }
-            }
-          }
-        },
-        InternalServerError: {
-          description: 'Internal server error',
-          content: {
-            'application/json': {
-              schema: {
-                type: 'object',
-                properties: {
-                  message: {
-                    type: 'string',
-                    example: 'Erro interno do servidor.'
-                  }
-                }
-              }
-            }
-          }
         }
       }
     },
@@ -108,5 +62,5 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
       }
     ]
   },
-  apis: ['src/controller/*.ts']
+  apis: ['src/controller/*.ts', 'src/docs/*.ts']
 };
