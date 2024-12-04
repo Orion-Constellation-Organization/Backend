@@ -78,10 +78,6 @@ export class LessonRequestRepository {
 
   static async saveMeetUrl(classId: number, hangoutLink: string): Promise<void> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
-    const lesson = await repository.findOne({ where: { classId } });
-    if (lesson) {
-      lesson.urlMeet = hangoutLink;
-      await repository.save(lesson);
-    }
+    await repository.update({ classId }, { urlMeet: hangoutLink });
   }
 }
