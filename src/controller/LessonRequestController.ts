@@ -3,6 +3,8 @@ import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
+import { EnumStatusName } from '../enum/EnumStatusName';
+import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 
 export class LessonRequestController {
   /**
@@ -31,7 +33,7 @@ export class LessonRequestController {
    *                 items:
    *                   type: string
    *                 description: Preferred dates for the lesson
-   *                 example: ["22/12/2024 às 10:00"]
+   *                 example: ["2024-12-22T10:00"]
    *               subjectId:
    *                 type: integer
    *                 description: ID of the subject
@@ -68,7 +70,7 @@ export class LessonRequestController {
    *                       type: array
    *                       items:
    *                         type: string
-   *                       example: ["2025-12-25 23:45"]
+   *                       example: ["2025-12-25T23:45"]
    *                     additionalInfo:
    *                       type: string
    *                       example: "Looking for a tutor with experience in calculus."
@@ -109,7 +111,7 @@ export class LessonRequestController {
    *                             levelType:
    *                               type: string
    *                               example: "Fundamental"
-   *                     ClassId:
+   *                     classId:
    *                       type: integer
    *                       example: 12
    *       '400':
@@ -193,7 +195,7 @@ export class LessonRequestController {
    * @swagger
    * /api/lessonrequest:
    *   get:
-   *     summary: Retrieve lesson requests (all or filtered)
+   *     summary: Retrieve lesson requests (all or filtered by status)
    *     tags:
    *       - Lesson Request
    *     security:
@@ -202,10 +204,23 @@ export class LessonRequestController {
    *       - name: filtered
    *         in: query
    *         required: false
-   *         description: Whether to filter the lesson requests (true or false)
+   *         description: Whether to filter the lesson requests by status
    *         schema:
    *           type: boolean
    *           example: true
+   *       - name: status
+   *         in: query
+   *         required: true
+   *         schema:
+   *           type: string
+   *           enum:
+   *             - pendente
+   *             - aceito
+   *             - confirmado
+   *             - finalizado
+   *             - cancelado
+   *         description: Status name
+   *         example: aceito
    *       - name: id
    *         in: query
    *         required: false
@@ -236,11 +251,11 @@ export class LessonRequestController {
    *           example: ASC
    *       - name: orderBy
    *         in: query
-   *         required: false
+   *         required: true
    *         description: Field to order the results by
    *         schema:
    *           type: string
-   *           example: ClassId
+   *           example: classId
    *     responses:
    *       '200':
    *         description: Lesson requests retrieved successfully
@@ -251,7 +266,7 @@ export class LessonRequestController {
    *               items:
    *                 type: object
    *                 properties:
-   *                   ClassId:
+   *                   classId:
    *                     type: integer
    *                     example: 1
    *                   reason:
@@ -264,7 +279,7 @@ export class LessonRequestController {
    *                     items:
    *                       type: string
    *                       format: date-time
-   *                     example: ["2025-12-29T23:45:00Z"]
+   *                     example: ["2025-12-29T23:45"]
    *                   status:
    *                     type: string
    *                     example: "confirmado"
@@ -366,14 +381,12 @@ export class LessonRequestController {
   async getLessonRequests(req: Request, res: Response) {
     try {
       const tutorId = req.query.id ? Number(req.query.id) : null;
-      const page = Number(req.query.page) || 1;
-      const size = Number(req.query.size) || 10;
-      const order: string = (req.query.order as string)?.toUpperCase() || 'ASC';
-      const orderBy: string = (req.query.orderBy as string) || 'ClassId';
+      const status = req.query.status as EnumStatusName;
+      const params = sanitizePaginationParams(req.query);
       const filtered: boolean = req.query.filtered === 'true';
       const lessonRequests = filtered
-        ? await LessonRequestService.getFilteredRequests(Number(tutorId), page, size, order, orderBy)
-        : await LessonRequestRepository.listLessonRequests(page, size, order as 'ASC' | 'DESC', orderBy);
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), status, params)
+        : await LessonRequestRepository.listLessonRequests(params);
 
       return res.status(200).json(lessonRequests);
     } catch (error) {
@@ -407,7 +420,7 @@ export class LessonRequestController {
    *             schema:
    *               type: object
    *               properties:
-   *                 ClassId:
+   *                 classId:
    *                   type: integer
    *                   example: 1
    *                 reason:
@@ -566,8 +579,8 @@ export class LessonRequestController {
     }
 
     try {
-      const deletedRequest = await LessonRequestService.deleteLessonRequestById(Number(classId));
-      return res.status(204).end().json({ deletedRequest });
+      await LessonRequestService.deleteLessonRequestById(Number(classId));
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DELETED });
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
@@ -694,7 +707,7 @@ export class LessonRequestController {
    *   post:
    *     summary: Cancel a tutor's lesson request relationship by classId and tutorId
    *     tags:
-   *       - Lesson Request
+   *       - Tutor Lesson
    *     security:
    *       - BearerAuth: []
    *     parameters:

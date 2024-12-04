@@ -3,6 +3,7 @@ import { TutorService } from '../service/TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
+import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 
 export class TutorController {
   /**
@@ -101,7 +102,7 @@ export class TutorController {
    *                   items:
    *                     type: object
    *                     properties:
-   *                       ClassId:
+   *                       classId:
    *                         type: integer
    *                         example: 14
    *                       reason:
@@ -113,7 +114,7 @@ export class TutorController {
    *                         type: array
    *                         items:
    *                           type: string
-   *                           example: "29/12/2025 às 23:45"
+   *                           example: "2025-12-29T23:45"
    *                       status:
    *                         type: string
    *                         example: "pendente"
@@ -196,6 +197,35 @@ export class TutorController {
    *     tags: [Tutor]
    *     security:
    *       - BearerAuth: []
+   *     parameters:
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: true
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: id
    *     responses:
    *       '200':
    *         description: List of tutors retrieved successfully
@@ -243,7 +273,7 @@ export class TutorController {
    *                     items:
    *                       type: object
    *                       properties:
-   *                         ClassId:
+   *                         classId:
    *                           type: integer
    *                           example: 14
    *                         reason:
@@ -255,7 +285,7 @@ export class TutorController {
    *                           type: array
    *                           items:
    *                             type: string
-   *                             example: "29/12/2025 às 23:45"
+   *                             example: "2025-12-29T23:45"
    *                         status:
    *                           type: string
    *                           example: "pendente"
@@ -306,7 +336,8 @@ export class TutorController {
    */
   async getAll(req: Request, res: Response) {
     try {
-      const tutors = await TutorService.getAllTutors();
+      const params = sanitizePaginationParams(req.query);
+      const tutors = await TutorService.getAllTutors(params);
       return res.status(200).json(tutors);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -552,7 +583,7 @@ export class TutorController {
    *                   items:
    *                     type: object
    *                     properties:
-   *                       ClassId:
+   *                       classId:
    *                         type: integer
    *                         example: 14
    *                       reason:
@@ -626,10 +657,10 @@ export class TutorController {
 
   /**
    * @swagger
-   * /api/lesson-request/accept:
+   * /api/tutor-accept-lesson:
    *   patch:
    *     summary: Accept a lesson request
-   *     tags: [Lesson Request]
+   *     tags: [Tutor Lesson]
    *     security:
    *       - BearerAuth: []
    *     requestBody:

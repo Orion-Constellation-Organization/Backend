@@ -10,11 +10,12 @@ import { StudentService } from './StudentService';
 import { TutorService } from './TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestService {
   static formatLessonRequest(lessonRequest: LessonRequest) {
     return {
-      ClassId: lessonRequest.ClassId,
+      classId: lessonRequest.classId,
       reason: Array.isArray(lessonRequest.reason) ? lessonRequest.reason : [lessonRequest.reason],
       preferredDates: lessonRequest.preferredDates ? lessonRequest.preferredDates : [],
       status: lessonRequest.status,
@@ -116,18 +117,13 @@ export class LessonRequestService {
     }
   }
 
-  static async deleteLessonRequestById(classId: number) {
-    try {
-      const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
+  static async deleteLessonRequestById(classId: number): Promise<void> {
+    const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
 
-      if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
-      }
-
-      await LessonRequestRepository.deleteByClassId(classId);
-    } catch (error) {
-      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
+    if (!lessonRequest) {
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
+    await LessonRequestRepository.deleteByClassId(classId);
   }
 
   static async cancelTutorLessonRequestById(classId: number, tutorId: number) {
@@ -168,12 +164,13 @@ export class LessonRequestService {
     return updatedLessonRequest;
   }
 
-  static async getFilteredRequests(tutorId: number, page: number, size: number, order: string, orderBy: string): Promise<LessonRequest[]> {
+  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 400);
     }
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, page, size, order as 'ASC' | 'DESC', orderBy);
+
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params);
     return lessonRequests;
   }
 }
