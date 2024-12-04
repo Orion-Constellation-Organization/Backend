@@ -44,7 +44,7 @@ export class SubjectController {
    *         description: Internal server error
    */
   @HttpRoute({
-    path: '/api/register/subject',
+    path: '/api/register/subject/protected',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -88,7 +88,7 @@ export class SubjectController {
    *       '500':
    *         description: Internal server error
    */
-  @NoAuthRoute({ path: '/api/get/subject', method: 'get' })
+  @NoAuthRoute({ path: '/api/get/subject/public', method: 'get' })
   async getAll(req: Request, res: Response) {
     try {
       const subjects = await SubjectService.getAllSubjects();

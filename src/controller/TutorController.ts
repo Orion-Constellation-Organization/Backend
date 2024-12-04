@@ -177,7 +177,7 @@ export class TutorController {
    *                   type: string
    */
   @HttpRoute({
-    path: '/api/tutor',
+    path: '/api/tutor/protected',
     method: 'post',
     middlewares: [...TutorValidator.createTutor(), authMiddleware()]
   })
@@ -313,7 +313,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/get/tutor',
+    path: '/api/get/tutor/protected',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -405,7 +405,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/update/tutor',
+    path: '/api/update/tutor/protected',
     method: 'patch',
     middlewares: [authMiddleware()]
   })
@@ -489,7 +489,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/tutor/photo',
+    path: '/api/tutor/photo/protected',
     method: 'patch',
     middlewares: [authMiddleware()]
   })
@@ -639,7 +639,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/tutor/:id',
+    path: '/api/tutor/:id/protected',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -742,7 +742,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lesson-request/accept',
+    path: '/api/lesson-request/accept/protected',
     method: 'patch',
     middlewares: [authMiddleware()]
   })

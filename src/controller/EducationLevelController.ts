@@ -73,7 +73,7 @@ export class EducationLevelController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/educationLevel',
+    path: '/api/educationLevel/protected',
     method: 'post',
     middlewares: []
   })
@@ -138,7 +138,7 @@ export class EducationLevelController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/educationLevel',
+    path: '/api/educationLevel/protected',
     method: 'get',
     middlewares: []
   })

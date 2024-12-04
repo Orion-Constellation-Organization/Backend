@@ -43,7 +43,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/register/student',
+    path: '/api/register/student/protected',
     method: 'post',
     middlewares: [...StudentValidator.createStudent()]
   })
@@ -81,7 +81,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/student',
+    path: '/api/student/protected',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -94,178 +94,6 @@ export class StudentController {
       return res.status(statusCode).json({ message });
     }
   }
-
-  /**
-   * @swagger
-   * /api/student/{id}:
-   *   get:
-   *     summary: Retrieve a student by ID
-   *     tags: [Student]
-   *     security:
-   *       - BearerAuth: []
-   *     parameters:
-   *       - name: id
-   *         in: path
-   *         required: true
-   *         description: ID of the student to retrieve
-   *         schema:
-   *           type: integer
-   *           example: 1
-   *     responses:
-   *       '200':
-   *         description: Successfully retrieved the student by ID
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 id:
-   *                   type: integer
-   *                   example: 1
-   *                 username:
-   *                   type: string
-   *                   example: "alunoTESTE11"
-   *                 birthDate:
-   *                   type: string
-   *                   format: date
-   *                   example: "2024-11-09"
-   *                 educationLevel:
-   *                   type: object
-   *                   properties:
-   *                     educationId:
-   *                       type: integer
-   *                       example: 1
-   *                     levelType:
-   *                       type: string
-   *                       example: "Fundamental"
-   *                 lessonRequests:
-   *                   type: array
-   *                   items:
-   *                     type: object
-   *                     properties:
-   *                       ClassId:
-   *                         type: integer
-   *                         example: 1
-   *                       reason:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           example: "reforço"
-   *                       preferredDates:
-   *                         type: array
-   *                         items:
-   *                           type: string
-   *                           format: date-time
-   *                           example: "2025-12-15T22:00"
-   *                       status:
-   *                         type: string
-   *                         example: "pendente"
-   *                       additionalInfo:
-   *                         type: string
-   *                         example: "Looking for a tutor with experience in calculus."
-   *                       subject:
-   *                         type: object
-   *                         properties:
-   *                           subjectId:
-   *                             type: integer
-   *                             example: 1
-   *                           subjectName:
-   *                             type: string
-   *                             example: "Biologia"
-   *                       lessonRequestTutors:
-   *                         type: array
-   *                         items:
-   *                           type: object
-   *                           properties:
-   *                             id:
-   *                               type: integer
-   *                               example: 2
-   *                             chosenDate:
-   *                               type: string
-   *                               format: date-time
-   *                               example: "2025-12-15T22:00"
-   *                             status:
-   *                               type: string
-   *                               example: "confirmado"
-   *                             tutor:
-   *                               type: object
-   *                               nullable: true
-   *                               properties:
-   *                                 id:
-   *                                   type: integer
-   *                                   example: 2
-   *                                 username:
-   *                                   type: string
-   *                                   example: "tutorTeste02"
-   *                                 expertise:
-   *                                   type: string
-   *                                   example: "Matemática"
-   *                                 projectReason:
-   *                                   type: string
-   *                                   example: "I love studying"
-   *                                 subjects:
-   *                                   type: array
-   *                                   items:
-   *                                     type: object
-   *                                     properties:
-   *                                       subjectId:
-   *                                         type: integer
-   *                                         example: 2
-   *                                       subjectName:
-   *                                         type: string
-   *                                         example: "Sociologia"
-   *       '401':
-   *         description: Unauthorized, missing or invalid token
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Token inválido."
-   *       '404':
-   *         description: Student not found
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Estudante não encontrado."
-   *       '500':
-   *         description: Internal server error
-   *         content:
-   *           application/json:
-   *             schema:
-   *               type: object
-   *               properties:
-   *                 message:
-   *                   type: string
-   *                   example: "Erro interno do servidor."
-   */
-  async getById(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const student = await StudentService.getStudentById(Number(id));
-
-      const formattedStudent = {
-        id: student.id,
-        username: student.username,
-        fullName: student.fullName,
-        birthDate: student.birthDate,
-        educationLevel: student.educationLevel,
-        lessonRequests: student.lessonRequests
-      };
-
-      return res.status(200).json(formattedStudent);
-    } catch (error) {
-      const { statusCode, message } = handleError(error);
-      return res.status(statusCode).json({ message });
-    }
-  }
-
   /**
    * @swagger
    * /api/student-lesson-status:
@@ -305,7 +133,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/student-lesson-status',
+    path: '/api/student-lesson-statusprotected',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -353,7 +181,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/confirm-lesson-request',
+    path: '/api/confirm-lesson-request/protected',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -397,6 +225,11 @@ export class StudentController {
    *       '404': { $ref: '#/components/responses/NotFound' }
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
+  @HttpRoute({
+    path: '/students/:id/protected',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;

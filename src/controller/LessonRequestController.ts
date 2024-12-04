@@ -371,7 +371,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/get/lessonrequest',
+    path: '/api/get/lessonrequest/protected',
     method: 'get',
     middlewares: [authMiddleware(), ...LessonRequestValidator.getLessonRequests()]
   })
@@ -509,7 +509,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/get/lessonrequest/:id',
+    path: '/api/get/lessonrequest/:id/protected',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -575,7 +575,7 @@ export class LessonRequestController {
    */
 
   @HttpRoute({
-    path: '/api/delete/lessonrequest/:id',
+    path: '/api/delete/lessonrequest/:id/protected',
     method: 'delete',
     middlewares: [authMiddleware()]
   })
@@ -693,7 +693,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest/:lessonId',
+    path: '/api/lessonrequest/:lessonId/protected',
     method: 'patch',
     middlewares: [authMiddleware(), ...LessonRequestValidator.createLessonRequest()]
   })
