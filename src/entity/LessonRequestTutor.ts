@@ -12,7 +12,10 @@ export class LessonRequestTutor {
   @JoinColumn({ name: 'tutorId' })
   tutor: Tutor;
 
-  @ManyToOne(() => LessonRequest, (lessonRequest) => lessonRequest.lessonRequestTutors)
+  @ManyToOne(() => LessonRequest, (lessonRequest) => lessonRequest.lessonRequestTutors, {
+    cascade: true,
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'lessonRequestId' })
   lessonRequest: LessonRequest;
 
