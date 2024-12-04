@@ -17,11 +17,7 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
     tags: [
       
       { name: 'Auth', description: 'Rotas relacionadas à autenticação' },
-
-      { name: 'Education Level', description: 'Rotas relacionadas aos níveis de ensino' }
-    ,
-      { name: 'Subject', description: 'Rotas relacionadas a matérias' }
-
+      { name: 'Education Level', description: 'Rotas relacionadas aos níveis de ensino' },
       { name: 'Subject', description: 'Rotas relacionadas a matérias' },
       { name: 'Student', description: 'Rotas relacionadas a estudantes' },
       { name: 'Student Lessons', description: 'Rotas relacionadas às aulas dos estudantes' },
