@@ -12,6 +12,7 @@ import { EnumUserType } from '../enum/EnumUserType';
 import { AppError } from '../error/AppError';
 import { handleError } from '../utils/ErrorHandler';
 import { LessonRequestService } from './LessonRequestService';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class TutorService extends UserService {
   static formatTutor(tutor: Tutor) {
@@ -25,7 +26,7 @@ export class TutorService extends UserService {
       projectReason: tutor.projectReason,
       lessonRequestTutors: tutor.lessonRequestTutors
         ? tutor.lessonRequestTutors.map((lessonRequestTutor) => ({
-            lessonRequestId: lessonRequestTutor.lessonRequest.ClassId,
+            lessonRequestId: lessonRequestTutor.lessonRequest.classId,
             chosenDate: lessonRequestTutor.chosenDate,
             lessonRequest: LessonRequestService.formatLessonRequest(lessonRequestTutor.lessonRequest)
           }))
@@ -128,9 +129,9 @@ export class TutorService extends UserService {
     }
   }
 
-  static async getAllTutors() {
+  static async getAllTutors(params: PaginationParams) {
     try {
-      const tutors = await TutorRepository.findAllTutors();
+      const tutors = await TutorRepository.findAllTutors(params);
       if (!tutors) {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
@@ -145,7 +146,6 @@ export class TutorService extends UserService {
   static async acceptLessonRequest(lessonId: number, tutorId: number, chosenDate: string) {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
-
       if (!lessonRequest) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
@@ -159,7 +159,7 @@ export class TutorService extends UserService {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
-      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.ClassId, tutor.id);
+      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.classId, tutor.id);
 
       if (existingLessonRequestTutor) {
         throw new AppError(EnumErrorMessages.TUTOR_ALREADY_ADDED, 400);

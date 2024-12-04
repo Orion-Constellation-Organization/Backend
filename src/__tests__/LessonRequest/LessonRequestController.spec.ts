@@ -37,8 +37,8 @@ describe('LessonRequestController - DeleteById', () => {
     await controller.deleteById(req as Request, res as Response);
 
     expect(LessonRequestService.deleteLessonRequestById).toHaveBeenCalledWith(1);
-    expect(res.status).toHaveBeenCalledWith(204);
-    expect(res.end).toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({ message: 'Aula deletada com sucesso!' });
   });
 
   it('deve retornar 500 se ocorrer um erro durante a exclusão', async () => {

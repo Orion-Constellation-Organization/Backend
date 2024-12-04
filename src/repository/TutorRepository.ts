@@ -1,3 +1,4 @@
+import { PaginationParams } from '../interface/PaginationParams';
 import { MysqlDataSource } from '../config/database';
 import { Tutor } from '../entity/Tutor';
 import { UserRepository } from './UserRepository';
@@ -13,8 +14,9 @@ export class TutorRepository extends UserRepository {
     return repository.findOne({ where: { cpf } });
   }
 
-  static async findAllTutors() {
+  static async findAllTutors(params: PaginationParams) {
     const repository = MysqlDataSource.getRepository(Tutor);
+    const skip = (params.page - 1) * params.size;
     return repository
       .createQueryBuilder('mainTutor')
       .leftJoinAndSelect('mainTutor.lessonRequestTutors', 'lessonRequestTutor')
@@ -22,6 +24,9 @@ export class TutorRepository extends UserRepository {
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('mainTutor.subjects', 'subjects')
+      .orderBy(`mainTutor.${params.orderBy}`, params.order)
+      .skip(skip)
+      .take(params.size)
       .getMany();
   }
 
