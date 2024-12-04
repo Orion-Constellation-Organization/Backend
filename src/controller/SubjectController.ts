@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { SubjectService } from '../service/SubjectService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
-import { HttpRoute, NoAuthRoute } from '../decorators/HttpRoute';
+import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class SubjectController {
@@ -44,7 +44,7 @@ export class SubjectController {
    *         description: Internal server error
    */
   @HttpRoute({
-    path: '/api/register/subject/protected',
+    path: '/apisubject/protected',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -88,7 +88,11 @@ export class SubjectController {
    *       '500':
    *         description: Internal server error
    */
-  @NoAuthRoute({ path: '/api/get/subject/public', method: 'get' })
+  @HttpRoute({
+    path: '/api/subject/protected',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const subjects = await SubjectService.getAllSubjects();

@@ -3,6 +3,7 @@ import { EducationLevelService } from '../service/EducationLevelService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from 'middleware/AuthMiddleware';
 
 export class EducationLevelController {
   /**
@@ -75,7 +76,7 @@ export class EducationLevelController {
   @HttpRoute({
     path: '/api/educationLevel/protected',
     method: 'post',
-    middlewares: []
+    middlewares: [authMiddleware()]
   })
   async create(req: Request, res: Response) {
     const { levelType } = req.body;
