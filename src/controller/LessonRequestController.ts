@@ -592,7 +592,7 @@ export class LessonRequestController {
     method: 'delete',
     middlewares: [authMiddleware('student', true)]
   })
-  async DeleteById(req: Request, res: Response) {
+  async deleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
     if (isNaN(classId) || classId <= 0) {
