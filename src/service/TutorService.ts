@@ -58,7 +58,7 @@ export class TutorService extends UserService {
       const foundEducationLevels = await EducationLevelRepository.findEducationLevelsByIds(educationLevelIds);
 
       if (!foundEducationLevels || foundEducationLevels.length !== educationLevelIds.length) {
-        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 400);
       }
 
       tutor.educationLevels = foundEducationLevels;
@@ -73,7 +73,7 @@ export class TutorService extends UserService {
   static async updateTutorPhoto(tutor, file: Express.Multer.File) {
     try {
       if (!tutor) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       if (!file) {
@@ -94,7 +94,7 @@ export class TutorService extends UserService {
     try {
       const tutorFound = await TutorRepository.findTutorById(tutor.id);
       if (!tutorFound) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       tutorFound.expertise = expertise;
@@ -102,7 +102,7 @@ export class TutorService extends UserService {
 
       const foundSubjects = await SubjectRepository.findSubjectByIds(subjectIds);
       if (!foundSubjects || foundSubjects.length !== subjectIds.length) {
-        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 400);
       }
 
       tutorFound.subjects = foundSubjects;
@@ -119,7 +119,7 @@ export class TutorService extends UserService {
       const tutor = await TutorRepository.findTutorById(Number(id));
 
       if (!tutor) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       return TutorService.formatTutor(tutor);
@@ -133,7 +133,7 @@ export class TutorService extends UserService {
     try {
       const tutors = await TutorRepository.findAllTutors(params);
       if (!tutors) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       return tutors.map(TutorService.formatTutor);
@@ -147,7 +147,7 @@ export class TutorService extends UserService {
     try {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
       if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       if (lessonRequest.status !== EnumStatusName.PENDENTE && lessonRequest.status !== EnumStatusName.ACEITO) {
@@ -156,7 +156,7 @@ export class TutorService extends UserService {
 
       const tutor = await TutorRepository.findTutorById(tutorId);
       if (!tutor) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.classId, tutor.id);

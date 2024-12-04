@@ -571,7 +571,7 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno no servidor"
    */
-  async DeleteById(req: Request, res: Response) {
+  async deleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
     if (isNaN(classId) || classId <= 0) {
@@ -610,6 +610,9 @@ export class LessonRequestController {
    *           schema:
    *             type: object
    *             properties:
+   *               id:
+   *                 type: integer
+   *                 example: 1
    *               subjectId:
    *                 type: integer
    *                 example: 1
@@ -684,7 +687,6 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-
   async updateLesson(req: Request, res: Response) {
     try {
       const { lessonId } = req.params;
