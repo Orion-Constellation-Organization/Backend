@@ -6,6 +6,8 @@ import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { HttpRoute } from '../decorators/HttpRoute';
 import { authMiddleware } from '../middleware/AuthMiddleware';
+import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
+import { N8nService } from '../third-party/N8nService';
 
 export class StudentController {
   /**
@@ -45,7 +47,7 @@ export class StudentController {
   @HttpRoute({
     path: '/api/register/student/protected',
     method: 'post',
-    middlewares: [...StudentValidator.createStudent()]
+    middlewares: StudentValidator.createStudent()
   })
   async create(req: Request, res: Response) {
     try {
@@ -68,6 +70,35 @@ export class StudentController {
    *   get:
    *     summary: Retrieve a list of all students
    *     tags: [Student]
+   *     parameters:
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: true
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: id
    *     responses:
    *       '200':
    *         description: List of students
@@ -87,7 +118,8 @@ export class StudentController {
   })
   async getAll(req: Request, res: Response) {
     try {
-      const students = await StudentService.getAllStudents();
+      const params = sanitizePaginationParams(req.query);
+      const students = await StudentService.getAllStudents(params);
       return res.status(200).json(students);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -118,6 +150,34 @@ export class StudentController {
    *           enum: [pendente, aceito, confirmado, finalizado, cancelado]
    *         description: Lesson status
    *         example: pendente
+   *       - name: page
+   *         in: query
+   *         required: true
+   *         description: Page number for pagination
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *       - name: size
+   *         in: query
+   *         required: true
+   *         description: Number of items per page
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: order
+   *         in: query
+   *         required: true
+   *         description: Sorting order (ASC or DESC)
+   *         schema:
+   *           type: string
+   *           example: ASC
+   *       - name: orderBy
+   *         in: query
+   *         required: true
+   *         description: Field to order the results by
+   *         schema:
+   *           type: string
+   *           example: id
    *     responses:
    *       '200':
    *         description: List of lessons
@@ -133,14 +193,15 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/student-lesson-statusprotected',
+    path: '/api/student-lesson-status/protected',
     method: 'get',
-    middlewares: [authMiddleware()]
+    middlewares: [authMiddleware('student', true)]
   })
   async getStudentLessons(req: Request, res: Response) {
     try {
       const { id, status } = req.query;
-      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName);
+      const params = sanitizePaginationParams(req.query);
+      const lessons = await StudentService.getStudentLessonsByStatus(Number(id), status as EnumStatusName, params);
       return res.status(200).json(lessons);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -163,8 +224,12 @@ export class StudentController {
    *           schema:
    *             type: object
    *             properties:
-   *               lessonId: { type: 'integer', example: 10 }
-   *               tutorId: { type: 'integer', example: 5 }
+   *               lessonId:
+   *                 type: integer
+   *                 example: 10
+   *               tutorId:
+   *                 type: integer
+   *                 example: 5
    *     responses:
    *       '200':
    *         description: Lesson confirmed
@@ -173,15 +238,22 @@ export class StudentController {
    *             schema:
    *               type: object
    *               properties:
-   *                 message: { type: 'string', example: 'Aula confirmada com sucesso!' }
-   *                 lessonRequest: { $ref: '#/components/schemas/LessonRequest' }
-   *       '400': { $ref: '#/components/responses/BadRequest' }
-   *       '401': { $ref: '#/components/responses/Unauthorized' }
-   *       '404': { $ref: '#/components/responses/NotFound' }
-   *       '500': { $ref: '#/components/responses/InternalServerError' }
+   *                 message:
+   *                   type: string
+   *                   example: 'Aula confirmada com sucesso!'
+   *                 lessonRequest:
+   *                   $ref: '#/components/schemas/LessonRequest'
+   *       '400':
+   *         $ref: '#/components/responses/BadRequest'
+   *       '401':
+   *         $ref: '#/components/responses/Unauthorized'
+   *       '404':
+   *         $ref: '#/components/responses/NotFound'
+   *       '500':
+   *         $ref: '#/components/responses/InternalServerError'
    */
   @HttpRoute({
-    path: '/api/confirm-lesson-request/protected',
+    path: '/api/student-confirm-lesson/protected',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -190,7 +262,7 @@ export class StudentController {
       const { lessonId, tutorId } = req.body;
 
       const lessonRequest = await StudentService.confirmLessonRequest(lessonId, tutorId);
-
+      await N8nService.triggerGoogleMeetWebhook(lessonRequest);
       return res.status(200).json({
         message: 'Aula confirmada com sucesso!',
         lessonRequest
@@ -228,7 +300,7 @@ export class StudentController {
   @HttpRoute({
     path: '/students/:id/protected',
     method: 'get',
-    middlewares: [authMiddleware()]
+    middlewares: [authMiddleware('student', true)]
   })
   async getById(req: Request, res: Response) {
     try {

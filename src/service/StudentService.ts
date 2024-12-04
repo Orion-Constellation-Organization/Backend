@@ -10,6 +10,7 @@ import { AppError } from '../error/AppError';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { EnumUserType } from '../enum/EnumUserType';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class StudentService extends UserService {
   static formatStudent(student: Student) {
@@ -41,7 +42,7 @@ export class StudentService extends UserService {
       const foundEducationLevel = await EducationLevelRepository.findEducationLevelById(educationLevelId);
 
       if (!foundEducationLevel) {
-        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.EDUCATION_LEVEL_NOT_FOUND, 400);
       }
 
       student.educationLevel = foundEducationLevel;
@@ -57,25 +58,25 @@ export class StudentService extends UserService {
   static async getStudentById(id: number) {
     const student = await StudentRepository.findStudentById(id);
     if (!student) {
-      throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 400);
     }
     return student;
   }
 
-  static async getAllStudents() {
-    const students = await StudentRepository.findAllStudents();
+  static async getAllStudents(params: PaginationParams) {
+    const students = await StudentRepository.findAllStudents(params);
     if (!students) {
-      throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 400);
     }
     return students;
   }
 
-  static async getStudentLessonsByStatus(id: number, status: EnumStatusName) {
+  static async getStudentLessonsByStatus(id: number, status: EnumStatusName, params: PaginationParams) {
     try {
-      const lessonRequests = await StudentRepository.findStudentLessonsByStatus(id, status);
+      const lessonRequests = await StudentRepository.findStudentLessonsByStatus(id, status, params);
 
       if (!lessonRequests || lessonRequests.length === 0) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       return lessonRequests;
@@ -90,7 +91,7 @@ export class StudentService extends UserService {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
       if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       if (lessonRequest.status === EnumStatusName.CONFIRMADO) {
@@ -104,7 +105,7 @@ export class StudentService extends UserService {
       const lessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonId, tutorId);
 
       if (!lessonRequestTutor) {
-        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
       await LessonRequestTutorRepository.updateStatus(lessonRequestTutor.id, EnumStatusName.CONFIRMADO);
@@ -116,7 +117,7 @@ export class StudentService extends UserService {
       lessonRequest.status = EnumStatusName.CONFIRMADO;
       await LessonRequestRepository.saveLessonRequest(lessonRequest);
 
-      return LessonRequestService.formatLessonRequest(lessonRequest);
+      return lessonRequest;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);

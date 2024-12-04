@@ -10,11 +10,12 @@ import { StudentService } from './StudentService';
 import { TutorService } from './TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
+import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestService {
   static formatLessonRequest(lessonRequest: LessonRequest) {
     return {
-      ClassId: lessonRequest.ClassId,
+      classId: lessonRequest.classId,
       reason: Array.isArray(lessonRequest.reason) ? lessonRequest.reason : [lessonRequest.reason],
       preferredDates: lessonRequest.preferredDates ? lessonRequest.preferredDates : [],
       status: lessonRequest.status,
@@ -47,17 +48,17 @@ export class LessonRequestService {
       ]);
 
       if (!foundSubject) {
-        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 400);
       }
       if (!foundStudent) {
-        throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.STUDENT_NOT_FOUND, 400);
       }
 
       lessonRequest.subject = foundSubject;
       lessonRequest.student = foundStudent;
 
       await LessonRequestRepository.saveLessonRequest(lessonRequest);
-      return this.formatLessonRequest(lessonRequest);
+      return lessonRequest;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);
@@ -67,7 +68,7 @@ export class LessonRequestService {
   static async getLessonRequestById(id: number): Promise<LessonRequest> {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(id);
     if (!lessonRequest) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     return lessonRequest;
@@ -84,7 +85,7 @@ export class LessonRequestService {
       const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
       if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
       }
 
       if (lessonRequest.status === EnumStatusName.ACEITO) {
@@ -99,7 +100,7 @@ export class LessonRequestService {
       const foundSubject = await SubjectRepository.findSubjectById(subjectId);
 
       if (!foundSubject) {
-        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 404);
+        throw new AppError(EnumErrorMessages.SUBJECT_NOT_FOUND, 400);
       }
 
       lessonRequest.reason = reason;
@@ -116,25 +117,20 @@ export class LessonRequestService {
     }
   }
 
-  static async deleteLessonRequestById(classId: number) {
-    try {
-      const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
+  static async deleteLessonRequestById(classId: number): Promise<void> {
+    const lessonRequest = await LessonRequestRepository.getLessonRequestById(classId);
 
-      if (!lessonRequest) {
-        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
-      }
-
-      await LessonRequestRepository.deleteByClassId(classId);
-    } catch (error) {
-      throw new AppError(EnumErrorMessages.INTERNAL_SERVER, 500);
+    if (!lessonRequest) {
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
+    await LessonRequestRepository.deleteByClassId(classId);
   }
 
   static async cancelTutorLessonRequestById(classId: number, tutorId: number) {
     const lessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(classId, tutorId);
 
     if (!lessonRequestTutor) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     if (lessonRequestTutor.status !== EnumStatusName.ACEITO) {
@@ -154,7 +150,7 @@ export class LessonRequestService {
     const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonId);
 
     if (!lessonRequest) {
-      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 404);
+      throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
     }
 
     if (lessonRequest.status === EnumStatusName.ACEITO && status !== EnumStatusName.PENDENTE) {
@@ -168,12 +164,13 @@ export class LessonRequestService {
     return updatedLessonRequest;
   }
 
-  static async getFilteredRequests(tutorId: number, page: number, size: number, order: string, orderBy: string): Promise<LessonRequest[]> {
+  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     if (!tutor.subjects || tutor.subjects.length === 0) {
-      throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 404);
+      throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 400);
     }
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, page, size, order as 'ASC' | 'DESC', orderBy);
+
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params);
     return lessonRequests;
   }
 }

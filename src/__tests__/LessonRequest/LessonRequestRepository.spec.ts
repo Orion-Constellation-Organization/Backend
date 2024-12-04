@@ -26,7 +26,7 @@ describe('LessonRequestRepository - deleteByClassId', () => {
 
     await LessonRequestRepository.deleteByClassId(classId);
 
-    expect(mockRepo.delete).toHaveBeenCalledWith({ ClassId: classId });
+    expect(mockRepo.delete).toHaveBeenCalledWith({ classId: classId });
   });
 
   it('deve lidar com erros durante a exclusão', async () => {
