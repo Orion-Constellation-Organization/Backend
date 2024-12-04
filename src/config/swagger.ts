@@ -22,6 +22,13 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
       { name: 'Lesson Request', description: 'Rotas relacionadas às solicitações de aulas' }
     ],
     components: {
+      securitySchemes: {
+        BearerAuth: {
+          in: 'header',
+          type: 'http',
+          scheme: 'bearer'
+        }
+      },
       schemas: {
         Student: {
           type: 'object',
