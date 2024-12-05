@@ -58,28 +58,39 @@ export class LessonRequestRepository {
     await repository.delete({ classId });
   }
 
-  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
-    const repository = await MysqlDataSource.getRepository(LessonRequest);
+  static async getFilteredRequests(tutorId: number | null, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
+    const repository = MysqlDataSource.getRepository(LessonRequest);
     const skip = (params.page - 1) * params.size;
-    return repository
+
+    const query = repository
       .createQueryBuilder('lessonRequest')
       .leftJoinAndSelect('lessonRequest.lessonRequestTutors', 'lessonRequestTutor')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('student.educationLevel', 'educationLevel')
-      .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor')
-      .where('lessonRequest.status = :status', { status })
-      .andWhere('lessonRequestTutor.tutorId = :tutorId', { tutorId })
-      .andWhere('educationLevel.educationId IN (SELECT educationLevelId FROM tutor_education_levels WHERE tutorId = :tutorId)', { tutorId })
-      .andWhere('subject.subjectId IN (SELECT subjectId FROM tutor_subjects_subject WHERE tutorId = :tutorId)', { tutorId })
-      .andWhere(
-        `(lessonRequestTutor.tutorId IS NULL OR lessonRequestTutor.tutorId != :tutorId OR lessonRequestTutor.status != :enumRecusado)`,
-        { tutorId, enumRecusado: EnumStatusName.RECUSADO }
-      )
-      .orderBy(`lessonRequest.${params.orderBy}`, params.order)
-      .skip(skip)
-      .take(params.size)
-      .getMany();
+      .leftJoinAndSelect('lessonRequestTutor.tutor', 'tutor');
+
+    if (status === 'pendente') {
+      query.where('lessonRequest.status = :status', { status: 'pendente' }).andWhere(
+        `(lessonRequest.classId NOT IN (
+            SELECT lrt.lessonRequestId 
+            FROM lesson_request_tutor lrt 
+            WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
+          ))`,
+        { tutorId, refusedStatus: 'recusado' }
+      );
+    } else {
+      query.where('lessonRequest.status = :status', { status }).andWhere(
+        `(lessonRequest.classId NOT IN (
+            SELECT lrt.lessonRequestId 
+            FROM lesson_request_tutor lrt 
+            WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
+          ))`,
+        { tutorId, refusedStatus: 'recusado' }
+      );
+    }
+
+    return query.orderBy(`lessonRequest.${params.orderBy}`, params.order).skip(skip).take(params.size).getMany();
   }
 
   static async saveMeetUrl(classId: number, hangoutLink: string): Promise<void> {

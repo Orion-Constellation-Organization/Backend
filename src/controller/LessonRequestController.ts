@@ -384,6 +384,9 @@ export class LessonRequestController {
       const status = req.query.status as EnumStatusName;
       const params = sanitizePaginationParams(req.query);
       const filtered: boolean = req.query.filtered === 'true';
+      console.log(filtered);
+      console.log(status);
+      console.log(tutorId);
       const lessonRequests = filtered
         ? await LessonRequestService.getFilteredRequests(Number(tutorId), status, params)
         : await LessonRequestRepository.listLessonRequests(params);

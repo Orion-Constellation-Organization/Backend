@@ -44,7 +44,7 @@ router.get('/', homeController.hello);
 router.post('/api/tutor', TutorValidator.createTutor(), tutorController.create);
 router.get('/api/tutor', authMiddleware(), tutorController.getAll);
 router.get('/api/tutor/:id', authMiddleware('tutor', true), tutorController.getById);
-router.patch('/api/tutor', authMiddleware('tutor', true), UpdatePersonalDataValidator, tutorController.updatePersonalData);
+router.patch('/api/tutor', authMiddleware(), UpdatePersonalDataValidator, tutorController.updatePersonalData);
 router.patch('/api/photo', authMiddleware(), upload.single('image'), UploadPhotoValidator, tutorController.updatePhoto);
 router.patch('/api/tutor-accept-lesson', authMiddleware(), tutorController.acceptLessonRequest);
 
@@ -87,7 +87,7 @@ router.post('/api/login', AuthValidator.login(), authController.login);
  * @route DELETE /api/lessonrequest-cancel
  */
 router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), lessonRequestController.create);
-router.post('/api/lessonrequest-decline', authMiddleware('tutor', true), new LessonRequestController().declineLessonRequest);
+router.post('/api/lessonrequest-decline', authMiddleware(), new LessonRequestController().declineLessonRequest);
 router.get('/api/lessonrequest', authMiddleware(), LessonRequestValidator.getLessonRequests(), lessonRequestController.getLessonRequests);
 router.get('/api/lessonrequest/:id', authMiddleware(), lessonRequestController.getById);
 router.delete('/api/lessonrequest/:id', authMiddleware('student', true), lessonRequestController.deleteById);

@@ -36,6 +36,7 @@ export class TutorRepository extends UserRepository {
       .createQueryBuilder('mainTutor')
       .leftJoinAndSelect('mainTutor.lessonRequestTutors', 'lessonRequestTutor')
       .leftJoinAndSelect('lessonRequestTutor.lessonRequest', 'lessonRequest')
+      .leftJoinAndSelect('mainTutor.educationLevels', 'educationLevels')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
       .leftJoinAndSelect('mainTutor.subjects', 'subjects')

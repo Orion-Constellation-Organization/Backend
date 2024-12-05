@@ -11,7 +11,6 @@ import { EnumStatusName } from '../enum/EnumStatusName';
 import { StudentService } from './StudentService';
 import { TutorService } from './TutorService';
 import { handleError } from '../utils/ErrorHandler';
-import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
 import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestService {
@@ -168,6 +167,7 @@ export class LessonRequestService {
 
   static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
+    console.log(tutor);
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 400);
     }
@@ -193,7 +193,7 @@ export class LessonRequestService {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
-      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.ClassId, tutor.id);
+      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.classId, tutor.id);
 
       if (existingLessonRequestTutor) {
         throw new AppError(EnumErrorMessages.LESSON_REQUEST_ALREADY_DECLINED, 400);
