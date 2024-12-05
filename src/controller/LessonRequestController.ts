@@ -3,6 +3,9 @@ import { LessonRequestService } from '../service/LessonRequestService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
+import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
+import { LessonRequestValidator } from '../validator/LessonRequestValidator';
 import { EnumStatusName } from '../enum/EnumStatusName';
 import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 
@@ -177,6 +180,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/lessonrequest',
+    method: 'post',
+    middlewares: [authMiddleware(), ...LessonRequestValidator.createLessonRequest()]
+  })
   async create(req: Request, res: Response) {
     try {
       const lessonRequest = await LessonRequestService.createLessonRequest(req.body);
@@ -377,7 +385,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-
+  @HttpRoute({
+    path: '/api/lessonrequest',
+    method: 'get',
+    middlewares: [authMiddleware(), ...LessonRequestValidator.getLessonRequests()]
+  })
   async getLessonRequests(req: Request, res: Response) {
     try {
       const tutorId = req.query.id ? Number(req.query.id) : null;
@@ -510,13 +522,16 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
-
+  @HttpRoute({
+    path: '/api/lessonrequest/:id',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getById(req: Request, res: Response) {
     const { id } = req.params;
 
     try {
       const lesson = await LessonRequestService.getLessonRequestById(Number(id));
-
       return res.status(200).json(lesson);
     } catch (error) {
       const { statusCode, message } = handleError(error);
@@ -572,6 +587,12 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno no servidor"
    */
+
+  @HttpRoute({
+    path: '/api/lessonrequest/:id',
+    method: 'delete',
+    middlewares: [authMiddleware('student', true)]
+  })
   async deleteById(req: Request, res: Response) {
     const classId = Number(req.params.id);
 
@@ -688,6 +709,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/lessonrequest/:lessonId',
+    method: 'patch',
+    middlewares: [authMiddleware('student', true)]
+  })
   async updateLesson(req: Request, res: Response) {
     try {
       const { lessonId } = req.params;
@@ -778,6 +804,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/lessonrequest-cancel',
+    method: 'delete',
+    middlewares: [authMiddleware('tutor', true)]
+  })
   async cancelTutorLessonRequest(req: Request, res: Response) {
     const { classId, tutorId } = req.query;
 
@@ -867,6 +898,11 @@ export class LessonRequestController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/lessonrequest-decline',
+    method: 'post',
+    middlewares: [authMiddleware('tutor', true)]
+  })
   async declineLessonRequest(req: Request, res: Response): Promise<Response> {
     const { lessonRequestId, tutorId } = req.body;
 

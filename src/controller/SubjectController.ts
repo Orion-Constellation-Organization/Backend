@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { SubjectService } from '../service/SubjectService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
+import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class SubjectController {
   /**
@@ -41,6 +43,11 @@ export class SubjectController {
    *       '500':
    *         description: Internal server error
    */
+  @HttpRoute({
+    path: '/api/subject',
+    method: 'post',
+    middlewares: [authMiddleware()]
+  })
   async create(req: Request, res: Response) {
     try {
       const { subjectName } = req.body;
@@ -81,6 +88,11 @@ export class SubjectController {
    *       '500':
    *         description: Internal server error
    */
+  @HttpRoute({
+    path: '/api/subject',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const subjects = await SubjectService.getAllSubjects();

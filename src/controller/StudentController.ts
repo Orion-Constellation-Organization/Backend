@@ -1,8 +1,11 @@
+import { StudentValidator } from './../validator/StudentValidator';
 import { Request, Response } from 'express';
 import { StudentService } from '../service/StudentService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { EnumStatusName } from '../enum/EnumStatusName';
+import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
 import { N8nService } from '../third-party/N8nService';
 
@@ -41,9 +44,15 @@ export class StudentController {
    *       '401': { $ref: '#/components/responses/Unauthorized' }
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
+  @HttpRoute({
+    path: '/api/register/student',
+    method: 'post',
+    middlewares: StudentValidator.createStudent()
+  })
   async create(req: Request, res: Response) {
     try {
       const { user: savedStudent, token } = await StudentService.createStudent(req.body);
+
       return res.status(201).json({
         message: EnumSuccessMessages.STUDENT_CREATED,
         id: savedStudent.id,
@@ -102,6 +111,11 @@ export class StudentController {
    *       '401': { $ref: '#/components/responses/Unauthorized' }
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
+  @HttpRoute({
+    path: '/api/student/',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const params = sanitizePaginationParams(req.query);
@@ -112,7 +126,6 @@ export class StudentController {
       return res.status(statusCode).json({ message });
     }
   }
-
   /**
    * @swagger
    * /api/student-lesson-status:
@@ -179,6 +192,11 @@ export class StudentController {
    *       '404': { $ref: '#/components/responses/NotFound' }
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
+  @HttpRoute({
+    path: '/api/student-lesson-status/',
+    method: 'get',
+    middlewares: [authMiddleware('student', true)]
+  })
   async getStudentLessons(req: Request, res: Response) {
     try {
       const { id, status } = req.query;
@@ -234,10 +252,15 @@ export class StudentController {
    *       '500':
    *         $ref: '#/components/responses/InternalServerError'
    */
-
+  @HttpRoute({
+    path: '/api/student-confirm-lesson/',
+    method: 'post',
+    middlewares: [authMiddleware()]
+  })
   async confirmLessonRequest(req: Request, res: Response) {
     try {
       const { lessonId, tutorId } = req.body;
+
       const lessonRequest = await StudentService.confirmLessonRequest(lessonId, tutorId);
       await N8nService.triggerGoogleMeetWebhook(lessonRequest);
       return res.status(200).json({
@@ -274,6 +297,11 @@ export class StudentController {
    *       '404': { $ref: '#/components/responses/NotFound' }
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
+  @HttpRoute({
+    path: '/api/student/:id',
+    method: 'get',
+    middlewares: [authMiddleware('student', true)]
+  })
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;

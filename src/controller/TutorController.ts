@@ -1,9 +1,15 @@
+import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 import { Request, Response } from 'express';
 import { TutorService } from '../service/TutorService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
-import { EnumErrorMessages } from '../enum/EnumErrorMessages';
+import { HttpRoute } from '../decorators/HttpRoute';
+import { authMiddleware } from '../middleware/AuthMiddleware';
+import { TutorValidator } from '../validator/TutorValidator';
 import { sanitizePaginationParams } from '../validator/PaginationParamsValidator';
+import { UpdatePersonalDataValidator } from '../validator/UpdatePersonalDataValidator';
+import { upload } from '../config/s3Client';
+import { UploadPhotoValidator } from '../validator/UploadPhotoValidator';
 
 export class TutorController {
   /**
@@ -174,6 +180,11 @@ export class TutorController {
    *                 error:
    *                   type: string
    */
+  @HttpRoute({
+    path: '/api/tutor',
+    method: 'post',
+    middlewares: TutorValidator.createTutor()
+  })
   async create(req: Request, res: Response) {
     try {
       const { user: savedTutor, token } = await TutorService.createTutor(req.body);
@@ -334,6 +345,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/get/tutor',
+    method: 'get',
+    middlewares: [authMiddleware()]
+  })
   async getAll(req: Request, res: Response) {
     try {
       const params = sanitizePaginationParams(req.query);
@@ -422,6 +438,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/update/tutor',
+    method: 'patch',
+    middlewares: [authMiddleware('tutor', true), UpdatePersonalDataValidator]
+  })
   async updatePersonalData(req: Request, res: Response) {
     try {
       const { id, expertise, projectReason, subject: subjectIds } = req.body;
@@ -501,13 +522,20 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/photo',
+    method: 'patch',
+    middlewares: [authMiddleware(), upload.single('image'), UploadPhotoValidator]
+  })
   async updatePhoto(req: Request, res: Response) {
     try {
       const { id } = req.body;
       const tutor = await TutorService.getTutorById(id);
+
       if (!req.file) {
         return res.status(400).json({ message: EnumErrorMessages.PHOTO_REQUIRED });
       }
+
       await TutorService.updateTutorPhoto(tutor, req.file);
 
       return res.status(200).json({
@@ -644,6 +672,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/tutor/:id',
+    method: 'get',
+    middlewares: [authMiddleware('tutor', true)]
+  })
   async getById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -742,6 +775,11 @@ export class TutorController {
    *                   type: string
    *                   example: "Erro interno do servidor."
    */
+  @HttpRoute({
+    path: '/api/tutor-accept-lesson',
+    method: 'patch',
+    middlewares: [authMiddleware()]
+  })
   async acceptLessonRequest(req: Request, res: Response) {
     try {
       const { lessonId, tutorId, chosenDate } = req.body;
