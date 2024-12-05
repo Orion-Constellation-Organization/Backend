@@ -39,6 +39,7 @@ export class TutorRepository extends UserRepository {
       .leftJoinAndSelect('mainTutor.educationLevels', 'educationLevels')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
+      .leftJoinAndSelect('student.educationLevel', 'educationLevel')
       .leftJoinAndSelect('mainTutor.subjects', 'subjects')
       .where('mainTutor.id = :id', { id: tutorId })
       .getOne();
