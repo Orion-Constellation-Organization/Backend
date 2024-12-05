@@ -904,10 +904,10 @@ export class LessonRequestController {
     middlewares: [authMiddleware('tutor', true)]
   })
   async declineLessonRequest(req: Request, res: Response): Promise<Response> {
-    const { lessonRequestId, tutorId } = req.body;
+    const { lessonRequestId, id } = req.body;
 
     try {
-      await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(tutorId));
+      await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(id));
       return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DECLINED });
     } catch (error) {
       return res.status(400).json({ error: error.message });

@@ -19,6 +19,7 @@ export const authMiddleware = (requiredRole?: string, validateUser?: boolean) =>
     try {
       const decoded = AuthService.verifyToken(token) as DecodedToken;
       (req as unknown as { decoded: DecodedToken }).decoded = decoded;
+
       if (
         (validateUser && (Number(req.body.id) || Number(req.query.id) || Number(req.params.id)) !== decoded.id) ||
         (requiredRole && decoded.role !== requiredRole)

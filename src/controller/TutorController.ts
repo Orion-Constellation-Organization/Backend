@@ -439,7 +439,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/update/tutor',
+    path: '/api/tutor',
     method: 'patch',
     middlewares: [authMiddleware('tutor', true), UpdatePersonalDataValidator]
   })
