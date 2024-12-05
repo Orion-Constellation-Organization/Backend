@@ -165,14 +165,19 @@ export class LessonRequestService {
     return updatedLessonRequest;
   }
 
-  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
+  static async getFilteredRequests(
+    tutorId: number,
+    status: EnumStatusName,
+    params: PaginationParams,
+    onlyTutorRequests: boolean
+  ): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
     console.log(tutor);
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 400);
     }
 
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params);
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params, onlyTutorRequests);
     return lessonRequests;
   }
 

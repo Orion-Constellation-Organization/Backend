@@ -58,7 +58,12 @@ export class LessonRequestRepository {
     await repository.delete({ classId });
   }
 
-  static async getFilteredRequests(tutorId: number | null, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
+  static async getFilteredRequests(
+    tutorId: number | null,
+    status: EnumStatusName,
+    params: PaginationParams,
+    onlyTutorRequests: boolean
+  ): Promise<LessonRequest[]> {
     const repository = MysqlDataSource.getRepository(LessonRequest);
     const skip = (params.page - 1) * params.size;
 
@@ -73,20 +78,31 @@ export class LessonRequestRepository {
     if (status === 'pendente') {
       query.where('lessonRequest.status = :status', { status: 'pendente' }).andWhere(
         `(lessonRequest.classId NOT IN (
-            SELECT lrt.lessonRequestId 
-            FROM lesson_request_tutor lrt 
-            WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
-          ))`,
+          SELECT lrt.lessonRequestId 
+          FROM lesson_request_tutor lrt 
+          WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
+        ))`,
         { tutorId, refusedStatus: 'recusado' }
       );
     } else {
       query.where('lessonRequest.status = :status', { status }).andWhere(
         `(lessonRequest.classId NOT IN (
-            SELECT lrt.lessonRequestId 
-            FROM lesson_request_tutor lrt 
-            WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
-          ))`,
+          SELECT lrt.lessonRequestId 
+          FROM lesson_request_tutor lrt 
+          WHERE lrt.tutorId = :tutorId AND lrt.status = :refusedStatus
+        ))`,
         { tutorId, refusedStatus: 'recusado' }
+      );
+    }
+
+    if (onlyTutorRequests) {
+      query.andWhere(
+        `(lessonRequest.classId IN (
+          SELECT lrt.lessonRequestId
+          FROM lesson_request_tutor lrt
+          WHERE lrt.tutorId = :tutorId AND lrt.status IN (:...statuses)
+        ))`,
+        { tutorId, statuses: ['aceito', 'confirmado'] }
       );
     }
 
