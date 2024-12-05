@@ -88,7 +88,12 @@ router.post('/api/login', AuthValidator.login(), authController.login);
  */
 router.post('/api/lessonrequest', authMiddleware(), LessonRequestValidator.createLessonRequest(), lessonRequestController.create);
 router.post('/api/lessonrequest-decline', authMiddleware(), new LessonRequestController().declineLessonRequest);
-router.get('/api/lessonrequest', authMiddleware(), LessonRequestValidator.getLessonRequests(), lessonRequestController.getLessonRequests);
+router.get(
+  '/api/lessonrequest',
+  authMiddleware('tutor', true),
+  LessonRequestValidator.getLessonRequests(),
+  lessonRequestController.getLessonRequests
+);
 router.get('/api/lessonrequest/:id', authMiddleware(), lessonRequestController.getById);
 router.delete('/api/lessonrequest/:id', authMiddleware('student', true), lessonRequestController.deleteById);
 router.patch('/api/lessonrequest/:lessonId', authMiddleware('student', true), lessonRequestController.updateLesson);
