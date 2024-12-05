@@ -3,7 +3,7 @@ import { EducationLevelService } from '../service/EducationLevelService';
 import { handleError } from '../utils/ErrorHandler';
 import { EnumSuccessMessages } from '../enum/EnumSuccessMessages';
 import { HttpRoute } from '../decorators/HttpRoute';
-import { authMiddleware } from 'middleware/AuthMiddleware';
+import { authMiddleware } from '../middleware/AuthMiddleware';
 
 export class EducationLevelController {
   /**
@@ -74,7 +74,7 @@ export class EducationLevelController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/educationLevel/protected',
+    path: '/api/educationLevel',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -139,7 +139,7 @@ export class EducationLevelController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/educationLevel/protected',
+    path: '/api/educationLevel',
     method: 'get',
     middlewares: []
   })

@@ -44,7 +44,7 @@ export class SubjectController {
    *         description: Internal server error
    */
   @HttpRoute({
-    path: '/apisubject/protected',
+    path: '/api/subject',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -89,7 +89,7 @@ export class SubjectController {
    *         description: Internal server error
    */
   @HttpRoute({
-    path: '/api/subject/protected',
+    path: '/api/subject',
     method: 'get',
     middlewares: [authMiddleware()]
   })

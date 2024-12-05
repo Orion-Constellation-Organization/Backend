@@ -181,7 +181,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest/protected',
+    path: '/api/lessonrequest',
     method: 'post',
     middlewares: [authMiddleware(), ...LessonRequestValidator.createLessonRequest()]
   })
@@ -386,7 +386,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest/protected',
+    path: '/api/lessonrequest',
     method: 'get',
     middlewares: [authMiddleware(), ...LessonRequestValidator.getLessonRequests()]
   })
@@ -396,8 +396,9 @@ export class LessonRequestController {
       const status = req.query.status as EnumStatusName;
       const params = sanitizePaginationParams(req.query);
       const filtered: boolean = req.query.filtered === 'true';
+      const onlyTutorRequests: boolean = req.query.onlyTutorRequests === 'true';
       const lessonRequests = filtered
-        ? await LessonRequestService.getFilteredRequests(Number(tutorId), status, params)
+        ? await LessonRequestService.getFilteredRequests(Number(tutorId), status, params, onlyTutorRequests)
         : await LessonRequestRepository.listLessonRequests(params);
 
       return res.status(200).json(lessonRequests);
@@ -522,7 +523,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest/:id/protected',
+    path: '/api/lessonrequest/:id',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -588,7 +589,7 @@ export class LessonRequestController {
    */
 
   @HttpRoute({
-    path: '/api/lessonrequest/:id/protected',
+    path: '/api/lessonrequest/:id',
     method: 'delete',
     middlewares: [authMiddleware('student', true)]
   })
@@ -709,7 +710,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest/:lessonId/protected',
+    path: '/api/lessonrequest/:lessonId',
     method: 'patch',
     middlewares: [authMiddleware('student', true)]
   })
@@ -804,7 +805,7 @@ export class LessonRequestController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/lessonrequest-cancel/protected',
+    path: '/api/lessonrequest-cancel',
     method: 'delete',
     middlewares: [authMiddleware('tutor', true)]
   })
@@ -818,6 +819,98 @@ export class LessonRequestController {
     } catch (error) {
       const { statusCode, message } = handleError(error);
       return res.status(statusCode).json({ message });
+    }
+  }
+
+  /**
+   * @swagger
+   * /api/lessonrequest-decline:
+   *   post:
+   *     summary: Decline a tutor's lesson request by lessonRequestId and tutorId
+   *     tags:
+   *       - Lesson Request
+   *     security:
+   *       - BearerAuth: []
+   *     parameters:
+   *       - name: lessonRequestId
+   *         in: query
+   *         required: true
+   *         description: ID of the lesson request to decline
+   *         schema:
+   *           type: integer
+   *           example: 10
+   *       - name: tutorId
+   *         in: query
+   *         required: true
+   *         description: ID of the tutor who is declining the lesson request
+   *         schema:
+   *           type: integer
+   *           example: 2
+   *     responses:
+   *       '200':
+   *         description: Lesson request declined successfully
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Aula recusada com sucesso!"
+   *       '400':
+   *         description: Bad request, invalid data provided
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Parâmetro inválido"
+   *       '401':
+   *         description: Unauthorized, missing or invalid token
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token inválido."
+   *       '404':
+   *         description: Lesson request or tutor not found
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Pedido de aula não encontrado."
+   *       '500':
+   *         description: Internal server error
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro interno do servidor."
+   */
+  @HttpRoute({
+    path: '/api/lessonrequest-decline',
+    method: 'post',
+    middlewares: [authMiddleware('tutor', true)]
+  })
+  async declineLessonRequest(req: Request, res: Response): Promise<Response> {
+    const { lessonRequestId, tutorId } = req.body;
+
+    try {
+      await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(tutorId));
+      return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DECLINED });
+    } catch (error) {
+      return res.status(400).json({ error: error.message });
     }
   }
 }

@@ -32,13 +32,14 @@ export class TutorRepository extends UserRepository {
 
   static async findTutorById(tutorId: number) {
     const repository = MysqlDataSource.getRepository(Tutor);
-
     const tutor = await repository
       .createQueryBuilder('mainTutor')
       .leftJoinAndSelect('mainTutor.lessonRequestTutors', 'lessonRequestTutor')
       .leftJoinAndSelect('lessonRequestTutor.lessonRequest', 'lessonRequest')
+      .leftJoinAndSelect('mainTutor.educationLevels', 'educationLevels')
       .leftJoinAndSelect('lessonRequest.subject', 'subject')
       .leftJoinAndSelect('lessonRequest.student', 'student')
+      .leftJoinAndSelect('student.educationLevel', 'educationLevel')
       .leftJoinAndSelect('mainTutor.subjects', 'subjects')
       .where('mainTutor.id = :id', { id: tutorId })
       .getOne();

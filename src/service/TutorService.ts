@@ -122,7 +122,7 @@ export class TutorService extends UserService {
         throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
       }
 
-      return TutorService.formatTutor(tutor);
+      return tutor;
     } catch (error) {
       const { statusCode, message } = handleError(error);
       throw new AppError(message, statusCode);

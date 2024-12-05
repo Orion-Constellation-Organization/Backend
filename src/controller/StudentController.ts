@@ -45,7 +45,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/register/student/protected',
+    path: '/api/register/student',
     method: 'post',
     middlewares: StudentValidator.createStudent()
   })
@@ -112,7 +112,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/student/protected',
+    path: '/api/student/',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -193,7 +193,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/student-lesson-status/protected',
+    path: '/api/student-lesson-status/',
     method: 'get',
     middlewares: [authMiddleware('student', true)]
   })
@@ -253,7 +253,7 @@ export class StudentController {
    *         $ref: '#/components/responses/InternalServerError'
    */
   @HttpRoute({
-    path: '/api/student-confirm-lesson/protected',
+    path: '/api/student-confirm-lesson/',
     method: 'post',
     middlewares: [authMiddleware()]
   })
@@ -298,7 +298,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/students/:id/protected',
+    path: '/api/student/:id',
     method: 'get',
     middlewares: [authMiddleware('student', true)]
   })

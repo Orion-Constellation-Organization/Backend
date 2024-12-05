@@ -87,7 +87,7 @@ export class AuthController {
    *                   type: string
    */
   @HttpRoute({
-    path: '/api/login/protected',
+    path: '/api/login',
     method: 'post',
     middlewares: AuthValidator.login()
   })

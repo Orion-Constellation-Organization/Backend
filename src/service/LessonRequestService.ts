@@ -2,6 +2,8 @@ import { LessonRequest } from '../entity/LessonRequest';
 import { LessonRequestRepository } from '../repository/LessonRequestRepository';
 import { SubjectRepository } from '../repository/SubjectRepository';
 import { StudentRepository } from '../repository/StudentRepository';
+import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
+import { TutorRepository } from '../repository/TutorRepository';
 import { AppError } from '../error/AppError';
 import { EnumErrorMessages } from '../enum/EnumErrorMessages';
 import { EnumReasonName } from '../enum/EnumReasonName';
@@ -9,7 +11,6 @@ import { EnumStatusName } from '../enum/EnumStatusName';
 import { StudentService } from './StudentService';
 import { TutorService } from './TutorService';
 import { handleError } from '../utils/ErrorHandler';
-import { LessonRequestTutorRepository } from '../repository/LessonRequestTutorRepository';
 import { PaginationParams } from '../interface/PaginationParams';
 
 export class LessonRequestService {
@@ -164,13 +165,51 @@ export class LessonRequestService {
     return updatedLessonRequest;
   }
 
-  static async getFilteredRequests(tutorId: number, status: EnumStatusName, params: PaginationParams): Promise<LessonRequest[]> {
+  static async getFilteredRequests(
+    tutorId: number,
+    status: EnumStatusName,
+    params: PaginationParams,
+    onlyTutorRequests: boolean
+  ): Promise<LessonRequest[]> {
     const tutor = await TutorService.getTutorById(Number(tutorId));
+    console.log(tutor);
     if (!tutor.subjects || tutor.subjects.length === 0) {
       throw new AppError(EnumErrorMessages.TUTOR_SUBJECT_NOT_FOUNT, 400);
     }
 
-    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params);
+    const lessonRequests = await LessonRequestRepository.getFilteredRequests(tutorId, status, params, onlyTutorRequests);
     return lessonRequests;
+  }
+
+  static async declineLessonRequest(lessonRequestId: number, tutorId: number): Promise<boolean> {
+    try {
+      const lessonRequest = await LessonRequestRepository.getLessonRequestById(lessonRequestId);
+
+      if (!lessonRequest) {
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_NOT_FOUND, 400);
+      }
+
+      if (lessonRequest.status !== EnumStatusName.PENDENTE) {
+        throw new AppError(EnumErrorMessages.INVALID_PENDENTE_STATUS, 400);
+      }
+
+      const tutor = await TutorRepository.findTutorById(Number(tutorId));
+      if (!tutor) {
+        throw new AppError(EnumErrorMessages.TUTOR_NOT_FOUND, 400);
+      }
+
+      const existingLessonRequestTutor = await LessonRequestTutorRepository.findByLessonRequestAndTutor(lessonRequest.classId, tutor.id);
+
+      if (existingLessonRequestTutor) {
+        throw new AppError(EnumErrorMessages.LESSON_REQUEST_ALREADY_DECLINED, 400);
+      }
+
+      await LessonRequestTutorRepository.createLessonRequestTutor(lessonRequest, tutor, '', EnumStatusName.RECUSADO);
+
+      return true;
+    } catch (error) {
+      const { statusCode, message } = handleError(error);
+      throw new AppError(message, statusCode);
+    }
   }
 }
