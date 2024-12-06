@@ -745,7 +745,7 @@ export class LessonRequestController {
    *         schema:
    *           type: integer
    *           example: 21
-   *       - name: tutorId
+   *       - name: id
    *         in: query
    *         required: true
    *         description: ID of the tutor whose lesson request is to be cancelled
@@ -810,10 +810,10 @@ export class LessonRequestController {
     middlewares: [authMiddleware('tutor', true)]
   })
   async cancelTutorLessonRequest(req: Request, res: Response) {
-    const { classId, tutorId } = req.query;
+    const { classId, id } = req.query;
 
     try {
-      await LessonRequestService.cancelTutorLessonRequestById(Number(classId), Number(tutorId));
+      await LessonRequestService.cancelTutorLessonRequestById(Number(classId), Number(id));
 
       return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_CANCELED });
     } catch (error) {
