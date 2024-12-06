@@ -264,6 +264,13 @@ export class LessonRequestController {
    *         schema:
    *           type: string
    *           example: classId
+   *       - name: onlyTutorRequests
+   *         in: query
+   *         required: true
+   *         description: boolean to check if all lessons returned or only tutor's
+   *         schema:
+   *           type: boolean
+   *           example: true
    *     responses:
    *       '200':
    *         description: Lesson requests retrieved successfully
@@ -731,7 +738,7 @@ export class LessonRequestController {
   /**
    * @swagger
    * /api/lessonrequest-cancel:
-   *   post:
+   *   delete:
    *     summary: Cancel a tutor's lesson request relationship by classId and tutorId
    *     tags:
    *       - Tutor Lesson
@@ -839,7 +846,7 @@ export class LessonRequestController {
    *         schema:
    *           type: integer
    *           example: 10
-   *       - name: tutorId
+   *       - name: id
    *         in: query
    *         required: true
    *         description: ID of the tutor who is declining the lesson request
