@@ -266,7 +266,7 @@ export class LessonRequestController {
    *           example: classId
    *       - name: onlyTutorRequests
    *         in: query
-   *         required: true
+   *         required: false
    *         description: boolean to check if all lessons returned or only tutor's
    *         schema:
    *           type: boolean
@@ -838,21 +838,21 @@ export class LessonRequestController {
    *       - Lesson Request
    *     security:
    *       - BearerAuth: []
-   *     parameters:
-   *       - name: lessonRequestId
-   *         in: query
-   *         required: true
-   *         description: ID of the lesson request to decline
-   *         schema:
-   *           type: integer
-   *           example: 10
-   *       - name: id
-   *         in: query
-   *         required: true
-   *         description: ID of the tutor who is declining the lesson request
-   *         schema:
-   *           type: integer
-   *           example: 2
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               lessonRequestId:
+   *                 type: string
+   *                 description: lesson request id
+   *                 example: 1
+   *               id:
+   *                 type: string
+   *                 description: tutor id
+   *                 example: 1
    *     responses:
    *       '200':
    *         description: Lesson request declined successfully
@@ -912,12 +912,14 @@ export class LessonRequestController {
   })
   async declineLessonRequest(req: Request, res: Response): Promise<Response> {
     const { lessonRequestId, id } = req.body;
-
+    console.log(lessonRequestId);
+    console.log(id);
     try {
       await LessonRequestService.declineLessonRequest(Number(lessonRequestId), Number(id));
       return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_DECLINED });
     } catch (error) {
-      return res.status(400).json({ error: error.message });
+      const { statusCode, message } = handleError(error);
+      return res.status(statusCode).json({ message });
     }
   }
 }
