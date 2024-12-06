@@ -21,7 +21,7 @@ describe('LessonRequestController - DeleteById', () => {
   });
 
   it('deve retornar 400 se o parâmetro id for inválido', async () => {
-    req.params.id = 'invalid';
+    req.body = { classId: 'invalid' };
 
     await controller.deleteById(req as Request, res as Response);
 
@@ -30,7 +30,7 @@ describe('LessonRequestController - DeleteById', () => {
   });
 
   it('deve retornar 204 se a exclusão for bem-sucedida', async () => {
-    req.params.id = '1';
+    req.body = { classId: 1 };
 
     jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockResolvedValueOnce();
 
@@ -42,7 +42,7 @@ describe('LessonRequestController - DeleteById', () => {
   });
 
   it('deve retornar 500 se ocorrer um erro durante a exclusão', async () => {
-    req.params.id = '1';
+    req.body = { classId: '1' };
 
     jest.spyOn(LessonRequestService, 'deleteLessonRequestById').mockRejectedValueOnce(new Error('Erro interno do servidor'));
 
