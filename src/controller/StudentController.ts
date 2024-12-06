@@ -45,7 +45,7 @@ export class StudentController {
    *       '500': { $ref: '#/components/responses/InternalServerError' }
    */
   @HttpRoute({
-    path: '/api/register/student',
+    path: '/api/student',
     method: 'post',
     middlewares: StudentValidator.createStudent()
   })
@@ -259,9 +259,9 @@ export class StudentController {
   })
   async confirmLessonRequest(req: Request, res: Response) {
     try {
-      const { lessonId, tutorId } = req.body;
+      const { lessonId, id } = req.body;
 
-      const lessonRequest = await StudentService.confirmLessonRequest(lessonId, tutorId);
+      const lessonRequest = await StudentService.confirmLessonRequest(lessonId, Number(id));
       await N8nService.triggerGoogleMeetWebhook(lessonRequest);
       return res.status(200).json({
         message: 'Aula confirmada com sucesso!',

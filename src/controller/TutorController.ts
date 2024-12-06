@@ -346,7 +346,7 @@ export class TutorController {
    *                   example: "Erro interno do servidor."
    */
   @HttpRoute({
-    path: '/api/get/tutor',
+    path: '/api/tutor',
     method: 'get',
     middlewares: [authMiddleware()]
   })
@@ -782,9 +782,9 @@ export class TutorController {
   })
   async acceptLessonRequest(req: Request, res: Response) {
     try {
-      const { lessonId, tutorId, chosenDate } = req.body;
+      const { lessonId, id, chosenDate } = req.body;
 
-      await TutorService.acceptLessonRequest(lessonId, tutorId, chosenDate);
+      await TutorService.acceptLessonRequest(lessonId, id, chosenDate);
 
       return res.status(200).json({ message: EnumSuccessMessages.LESSON_REQUEST_ACCEPTED });
     } catch (error) {

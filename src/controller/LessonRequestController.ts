@@ -589,12 +589,12 @@ export class LessonRequestController {
    */
 
   @HttpRoute({
-    path: '/api/lessonrequest/:id',
+    path: '/api/lessonrequest/',
     method: 'delete',
     middlewares: [authMiddleware('student', true)]
   })
   async deleteById(req: Request, res: Response) {
-    const classId = Number(req.params.id);
+    const classId = Number(req.body.classId);
 
     if (isNaN(classId) || classId <= 0) {
       return res.status(400).json({ message: 'Parâmetro inválido' });
